@@ -1,5 +1,4 @@
 'use client';
-import { Container } from "@/components/ui/Container";
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
@@ -22,8 +21,8 @@ export const PlatformGrid = () => {
 
   useEffect(() => {
     fetch('/api/plataformas')
-      .then(res => res.json())
-      .then(data => {
+      .then((res) => res.json())
+      .then((data) => {
         setPlatforms(data);
         setLoading(false);
       })
@@ -40,7 +39,7 @@ export const PlatformGrid = () => {
 
   return (
     <section className="py-16 bg-papel">
-      <Container>
+      <div className="container mx-auto px-6">
         <h2 className="font-fraunces text-3xl md:text-4xl text-tinta font-bold mb-4">
           Índice de plataformas analizadas
         </h2>
@@ -57,22 +56,26 @@ export const PlatformGrid = () => {
               <div className="absolute top-4 right-4">
                 <Stamp
                   variant={
-                    platform.estado === 'verificada' ? 'verified' :
-                    platform.estado === 'revision' ? 'warning' : 'danger'
+                    platform.estado === 'verificada'
+                      ? 'verified'
+                      : platform.estado === 'revision'
+                      ? 'warning'
+                      : 'danger'
                   }
                   size="sm"
                   rotation={-6}
                 >
                   <span className="text-[8px] font-ibm-mono tracking-wider">
-                    {platform.estado === 'verificada' ? 'VERIFICADO' :
-                     platform.estado === 'revision' ? 'EN REVISIÓN' : 'NO RECOMENDADA'}
+                    {platform.estado === 'verificada'
+                      ? 'VERIFICADO'
+                      : platform.estado === 'revision'
+                      ? 'EN REVISIÓN'
+                      : 'NO RECOMENDADA'}
                   </span>
                 </Stamp>
               </div>
 
-              <h3 className="font-fraunces text-xl font-bold text-tinta pr-16">
-                {platform.nombre}
-              </h3>
+              <h3 className="font-fraunces text-xl font-bold text-tinta pr-16">{platform.nombre}</h3>
 
               <div className="mt-2 font-ibm-mono text-3xl font-bold text-tinta">
                 {platform.rating || '—'}
@@ -80,9 +83,7 @@ export const PlatformGrid = () => {
               </div>
 
               {platform.resumen && (
-                <p className="mt-3 text-sm font-inter text-tinta/70 line-clamp-2">
-                  {platform.resumen}
-                </p>
+                <p className="mt-3 text-sm font-inter text-tinta/70 line-clamp-2">{platform.resumen}</p>
               )}
 
               <Link

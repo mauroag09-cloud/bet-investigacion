@@ -1,5 +1,4 @@
 'use client';
-import { Container } from "@/components/ui/Container";
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -89,7 +88,7 @@ export const PlatformVerifier = () => {
   if (resultado?.encontrado && resultado.data) {
     return (
       <section className="py-16 bg-papel">
-        <Container>
+        <div className="container mx-auto px-6">
           <div className="max-w-3xl mx-auto">
             <h3 className="font-fraunces text-2xl font-bold text-tinta mb-4">Resultados para "{search}"</h3>
             <div className="space-y-4">
@@ -113,7 +112,7 @@ export const PlatformVerifier = () => {
     );
   }
 
-  // Estado "no encontrado" - mostrar formulario de solicitud con botón "Volver al inicio"
+  // Estado "no encontrado"
   if (resultado?.encontrado === false) {
     return (
       <section className="py-16 bg-papel">
@@ -180,20 +179,34 @@ export const PlatformVerifier = () => {
   // Vista inicial (buscador)
   return (
     <section className="py-16 bg-papel">
-      <Container>
+      <div className="container mx-auto px-6">
         <div className="text-center max-w-3xl mx-auto">
           <span className="block font-ibm-mono text-xs tracking-[0.2em] text-[#B08D57] uppercase mb-2">VERIFICACIÓN INSTANTÁNEA</span>
-          <h2 className="font-fraunces text-3xl md:text-4xl font-bold text-[#14213D]">¿Confi00e1s en tu casa de apuestas?</h2>
-          <p className="mt-2 font-inter text-sm text-[#14213D]/60 max-w-md mx-auto">Ingresá el nombre de cualquier plataforma de iGaming y te decimos si está verificada, su licencia y el historial de reclamos.</p>
+          <h2 className="font-fraunces text-3xl md:text-4xl font-bold text-[#14213D]">¿Confiás en tu casa de apuestas?</h2>
+          <p className="mt-2 font-inter text-sm text-[#14213D]/60 max-w-md mx-auto">Buscá el nombre y accedé a licencia, reputación e historial de reclamos en segundos.</p>
         </div>
 
         <div className="max-w-[480px] mx-auto mt-8">
           <form onSubmit={handleSearch} className="flex">
             <div className="relative flex-1">
               <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#14213D]"><SearchIcon /></div>
-              <input type="text" placeholder="Ej: Joker.top, BetMaster..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full pl-12 pr-4 py-3 border border-[#B08D57] rounded-l bg-[#FAF7F0] text-[#14213D] placeholder:text-[#14213D]/40 font-inter text-sm focus:outline-none focus:border-[#14213D] transition-colors" style={{ borderRadius: '4px 0 0 4px' }} />
+              <input
+                type="text"
+                placeholder="Ej: Joker.top, BetMaster..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full pl-12 pr-4 py-3 border border-[#B08D57] rounded-l bg-[#FAF7F0] text-[#14213D] placeholder:text-[#14213D]/40 font-inter text-sm focus:outline-none focus:border-[#14213D] transition-colors"
+                style={{ borderRadius: '4px 0 0 4px' }}
+              />
             </div>
-            <button type="submit" disabled={cargando} className="px-6 py-3 bg-[#14213D] text-white font-inter font-medium rounded-r hover:bg-[#14213D]/90 transition-colors whitespace-nowrap disabled:opacity-50" style={{ borderRadius: '0 4px 4px 0' }}>{cargando ? '...' : 'Verificar →'}</button>
+            <button
+              type="submit"
+              disabled={cargando}
+              className="px-6 py-3 bg-[#14213D] text-white font-inter font-medium rounded-r hover:bg-[#14213D]/90 transition-colors whitespace-nowrap disabled:opacity-50"
+              style={{ borderRadius: '0 4px 4px 0' }}
+            >
+              {cargando ? '...' : 'Verificar →'}
+            </button>
           </form>
         </div>
 

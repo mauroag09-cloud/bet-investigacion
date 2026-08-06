@@ -1,5 +1,4 @@
 'use client';
-import { Container } from "@/components/ui/Container";
 
 export const Methodology = () => {
   const steps = [
@@ -11,10 +10,8 @@ export const Methodology = () => {
 
   return (
     <section id="metodologia" className="py-16 bg-tinta text-papel">
-      <Container>
-        <h2 className="font-fraunces text-3xl md:text-4xl font-bold mb-4">
-          Metodología
-        </h2>
+      <div className="container mx-auto px-6">
+        <h2 className="font-fraunces text-3xl md:text-4xl font-bold mb-4">Metodología</h2>
         <p className="font-inter text-papel/60 mb-10 max-w-2xl">
           Así es como verificamos cada plataforma. Un proceso riguroso en 4 pasos.
         </p>
@@ -22,15 +19,9 @@ export const Methodology = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {steps.map((step) => (
             <div key={step.number} className="border-l-2 border-oro/30 pl-4">
-              <span className="font-ibm-mono text-3xl font-bold text-oro">
-                {step.number}
-              </span>
-              <h3 className="font-fraunces text-xl font-bold mt-1">
-                {step.title}
-              </h3>
-              <p className="font-inter text-sm text-papel/60 mt-1">
-                {step.desc}
-              </p>
+              <span className="font-ibm-mono text-3xl font-bold text-oro">{step.number}</span>
+              <h3 className="font-fraunces text-xl font-bold mt-1">{step.title}</h3>
+              <p className="font-inter text-sm text-papel/60 mt-1">{step.desc}</p>
             </div>
           ))}
         </div>
