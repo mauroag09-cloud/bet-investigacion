@@ -3,7 +3,7 @@ import { ProviderCarousel } from '@/components/home/ProviderCarousel';
 import { PlatformVerifier } from '@/components/home/PlatformVerifier';
 import { PromotionsList } from '@/components/home/PromotionsList';
 import { ClaimsSection } from '@/components/home/ClaimsSection';
-import { PlatformGrid } from '@/components/home/PlatformGrid';
+import { PlatformList } from '@/components/home/PlatformList';
 import { Methodology } from '@/components/home/Methodology';
 import { Values } from '@/components/home/Values';
 import { ResponsibleGaming } from '@/components/home/ResponsibleGaming';
@@ -17,7 +17,7 @@ export default function HomePage() {
       <PlatformVerifier />
       <PromotionsList />
       <ClaimsSection />
-      <PlatformGrid />
+      <PlatformList />
       <Methodology />
       <Values />
       <ResponsibleGaming />
