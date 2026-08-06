@@ -44,10 +44,8 @@ export const PromotionsList = () => {
   useEffect(() => {
     fetchPromotions();
 
-    // Recargar los datos cada 30 segundos para mantenerlos frescos
     const interval = setInterval(() => {
       fetchPromotions();
-      // Forzar actualización del Router Cache
       router.refresh();
     }, 30000);
 
@@ -111,19 +109,46 @@ export const PromotionsList = () => {
                   style={{ borderRadius: '6px' }}
                 >
                   <div className="absolute inset-[4px] border-2 border-dashed border-[#B08D57]/30 rounded pointer-events-none" style={{ borderRadius: '4px' }} />
-                  <div className="flex items-center justify-between mb-3">
+
+                  {/* Nombre de la plataforma + punto de estado */}
+                  <div className="flex items-center justify-between mb-1">
                     <div className="flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
-                      <span className="font-ibm-mono text-[11px] tracking-wider uppercase text-[#14213D]/70">{promo.platform}</span>
+                      <span className="font-ibm-mono text-[11px] tracking-wider uppercase text-[#14213D]/70">
+                        {promo.platform}
+                      </span>
                     </div>
                   </div>
-                  <div className="text-center py-2">
+
+                  {/* Título (nuevo) */}
+                  {promo.titulo && (
+                    <div className="text-center mb-1">
+                      <span className="font-inter text-sm font-medium text-tinta/80">
+                        {promo.titulo}
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Valor principal */}
+                  <div className="text-center py-1">
                     <span className="font-fraunces text-4xl md:text-5xl font-black text-[#14213D]">{promo.valor}</span>
-                    <span className="block font-inter text-[12px] tracking-wider uppercase text-[#14213D]/50 mt-0.5">{promo.label}</span>
+                    <span className="block font-inter text-[12px] tracking-wider uppercase text-[#14213D]/50 mt-0.5">
+                      {promo.label}
+                    </span>
                   </div>
-                  <div className="w-8 h-px bg-[#B08D57]/40 mx-auto my-3" />
+
+                  <div className="w-8 h-px bg-[#B08D57]/40 mx-auto my-2" />
+
+                  {/* Condición */}
                   <p className="text-center font-ibm-mono text-[11px] text-[#14213D]/60">{promo.condicion}</p>
-                  <button className="w-full mt-4 py-2 bg-[#14213D] text-white text-sm font-inter font-medium rounded hover:bg-[#14213D]/90 transition-colors" style={{ borderRadius: '4px' }}>Activar →</button>
+
+                  {/* Botón */}
+                  <button
+                    className="w-full mt-3 py-2 bg-[#14213D] text-white text-sm font-inter font-medium rounded hover:bg-[#14213D]/90 transition-colors"
+                    style={{ borderRadius: '4px' }}
+                  >
+                    Activar →
+                  </button>
                 </motion.div>
               );
             })}
