@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 import { Stamp } from '@/components/ui/Stamp';
 
 type Platform = {
@@ -19,20 +18,14 @@ type Platform = {
 export const PlatformList = () => {
   const [platforms, setPlatforms] = useState<Platform[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   const fetchPlatforms = async () => {
-    setLoading(true);
-    setError(null);
     try {
-      const res = await fetch('/api/plataformas?_t=' + Date.now(), {
-        headers: { 'Cache-Control': 'no-cache' },
-      });
-      if (!res.ok) throw new Error('Error al cargar plataformas');
+      const res = await fetch('/api/plataformas?_t=' + Date.now());
       const data = await res.json();
       setPlatforms(data);
-    } catch (err) {
-      setError('Error al cargar plataformas');
+    } catch (e) {
+      console.error(e);
     } finally {
       setLoading(false);
     }
@@ -42,38 +35,20 @@ export const PlatformList = () => {
     fetchPlatforms();
   }, []);
 
-  if (loading) {
-    return (
-      <section className="py-16 bg-papel">
-        <div className="container mx-auto px-6 text-center text-gray-500">Cargando plataformas...</div>
-      </section>
-    );
-  }
+  const handleOpenLink = (url: string) => {
+    if (url && (url.startsWith('http://') || url.startsWith('https://'))) {
+      window.open(url, '_blank', 'noopener,noreferrer');
+    } else {
+      alert('El enlace no es válido o no está disponible.');
+    }
+  };
 
-  if (error) {
-    return (
-      <section className="py-16 bg-papel">
-        <div className="container mx-auto px-6 text-center text-red-500">
-          {error}
-          <button
-            onClick={fetchPlatforms}
-            className="ml-4 px-4 py-2 bg-tinta text-white rounded hover:bg-tinta/90"
-          >
-            Reintentar
-          </button>
-        </div>
-      </section>
-    );
+  if (loading) {
+    return <div className="py-16 text-center text-gray-500">Cargando...</div>;
   }
 
   if (platforms.length === 0) {
-    return (
-      <section className="py-16 bg-papel">
-        <div className="container mx-auto px-6 text-center text-gray-500">
-          No hay plataformas disponibles.
-        </div>
-      </section>
-    );
+    return <div className="py-16 text-center text-gray-500">No hay plataformas.</div>;
   }
 
   return (
@@ -82,76 +57,32 @@ export const PlatformList = () => {
         <h2 className="font-fraunces text-3xl md:text-4xl text-tinta font-bold mb-4">
           Índice de plataformas analizadas
         </h2>
-        <p className="font-inter text-tinta/60 mb-10 max-w-2xl">
-          Cada plataforma pasa por nuestro proceso de verificación en 5 etapas.
-        </p>
-
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {platforms.map((platform) => {
-            const linkFuente = platform['link-fuente'];
-            // Determinar si es externo: si empieza con http:// o https://
-            const isExternal = linkFuente && (linkFuente.startsWith('http://') || linkFuente.startsWith('https://'));
+            const link = platform['link-fuente'];
+            const hasValidLink = link && (link.startsWith('http://') || link.startsWith('https://'));
 
             return (
-              <div
-                key={platform.id}
-                className="bg-papel-light border border-oro/20 rounded-lg p-6 relative hover:shadow-lg transition-all hover:-translate-y-1"
-              >
+              <div key={platform.id} className="bg-papel-light border border-oro/20 rounded-lg p-6 relative hover:shadow-lg transition-all hover:-translate-y-1">
                 <div className="absolute top-4 right-4">
-                  <Stamp
-                    variant={
-                      platform.estado === 'verificada'
-                        ? 'verified'
-                        : platform.estado === 'revision'
-                        ? 'warning'
-                        : 'danger'
-                    }
-                    size="sm"
-                    rotation={-6}
-                  >
+                  <Stamp variant={platform.estado === 'verificada' ? 'verified' : platform.estado === 'revision' ? 'warning' : 'danger'} size="sm" rotation={-6}>
                     <span className="text-[8px] font-ibm-mono tracking-wider">
-                      {platform.estado === 'verificada'
-                        ? 'VERIFICADO'
-                        : platform.estado === 'revision'
-                        ? 'EN REVISIÓN'
-                        : 'NO RECOMENDADA'}
+                      {platform.estado === 'verificada' ? 'VERIFICADO' : platform.estado === 'revision' ? 'EN REVISIÓN' : 'NO RECOMENDADA'}
                     </span>
                   </Stamp>
                 </div>
-
-                <h3 className="font-fraunces text-xl font-bold text-tinta pr-16">
-                  {platform.nombre}
-                </h3>
-
-                <div className="mt-2 font-ibm-mono text-3xl font-bold text-tinta">
-                  {platform.rating || '—'}
-                  <span className="text-sm font-inter font-normal text-tinta/50">/10</span>
-                </div>
-
-                {platform.resumen && (
-                  <p className="mt-3 text-sm font-inter text-tinta/70 line-clamp-2">
-                    {platform.resumen}
-                  </p>
-                )}
-
-                {isExternal ? (
-                  /* Enlace externo: uso <a> con target="_blank" y rel="noopener noreferrer" */
-                  <a
-                    href={linkFuente}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-4 inline-block text-sm font-inter font-medium text-tinta hover:text-oro transition-colors"
+                <h3 className="font-fraunces text-xl font-bold text-tinta pr-16">{platform.nombre}</h3>
+                <div className="mt-2 font-ibm-mono text-3xl font-bold text-tinta">{platform.rating || '—'}<span className="text-sm font-inter font-normal text-tinta/50">/10</span></div>
+                {platform.resumen && <p className="mt-3 text-sm font-inter text-tinta/70 line-clamp-2">{platform.resumen}</p>}
+                {hasValidLink ? (
+                  <button
+                    onClick={() => handleOpenLink(link)}
+                    className="mt-4 inline-block text-sm font-inter font-medium text-blue-600 hover:underline cursor-pointer"
                   >
                     Ver expediente completo →
-                  </a>
+                  </button>
                 ) : (
-                  /* Enlace interno: uso next/link */
-                  <Link
-                    href={`/plataformas/${platform.slug}`}
-                    className="mt-4 inline-block text-sm font-inter font-medium text-tinta hover:text-oro transition-colors"
-                  >
-                    Ver expediente completo →
-                  </Link>
+                  <span className="mt-4 inline-block text-sm text-gray-400">Sin expediente</span>
                 )}
               </div>
             );
