@@ -18,7 +18,7 @@ export const Header = () => {
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center">
           <img 
-            src="TU_URL_LOGO" 
+            src="https://img.infobetonline.com/logo.png" 
             alt="Infobet" 
             className="h-16 w-auto"
           />
