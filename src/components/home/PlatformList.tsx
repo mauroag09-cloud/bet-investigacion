@@ -13,7 +13,7 @@ type Platform = {
   rating?: number;
   resumen?: string;
   logo_url?: string;
-  link-fuente?: string; // Nueva columna
+  'link-fuente'?: string; // ← CORREGIDO: entre comillas
 };
 
 export const PlatformList = () => {
@@ -129,9 +129,9 @@ export const PlatformList = () => {
                 </p>
               )}
 
-              {platform.link-fuente ? (
+              {platform['link-fuente'] ? (
                 <a
-                  href={platform.link-fuente}
+                  href={platform['link-fuente']}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="mt-4 inline-block text-sm font-inter font-medium text-tinta hover:text-oro transition-colors"
@@ -153,4 +153,3 @@ export const PlatformList = () => {
     </section>
   );
 };
- 
