@@ -25,3 +25,14 @@ export default function HomePage() {
     </>
   );
 }
+
+function TestApi() {
+  const [data, setData] = useState(null);
+  useEffect(() => {
+    fetch('/api/plataformas')
+      .then(res => res.json())
+      .then(setData)
+      .catch(() => setData({error: 'falló'}));
+  }, []);
+  return <pre>{JSON.stringify(data, null, 2)}</pre>;
+}
