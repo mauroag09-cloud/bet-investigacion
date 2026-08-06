@@ -19,20 +19,187 @@ const SearchIcon = () => (
   </svg>
 );
 
+type ResultadoBusqueda = {
+  encontrado: boolean;
+  data?: any[];
+  termino?: string;
+};
+
 export const PlatformVerifier = () => {
   const [search, setSearch] = useState('');
+  const [resultado, setResultado] = useState<ResultadoBusqueda | null>(null);
+  const [cargando, setCargando] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Estado para el formulario de solicitud
+  const [solicitudNombre, setSolicitudNombre] = useState('');
+  const [solicitudEmail, setSolicitudEmail] = useState('');
+  const [solicitudDescripcion, setSolicitudDescripcion] = useState('');
+  const [solicitudEnviada, setSolicitudEnviada] = useState(false);
+  const [solicitudError, setSolicitudError] = useState('');
+
+  const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (search.trim()) {
-      window.location.href = `/plataformas?search=${encodeURIComponent(search)}`;
+    if (!search.trim()) return;
+
+    setCargando(true);
+    setResultado(null);
+    setSolicitudEnviada(false);
+    setSolicitudError('');
+
+    try {
+      const res = await fetch(`/api/plataformas/buscar?termino=${encodeURIComponent(search)}`);
+      const data = await res.json();
+      setResultado(data);
+    } catch {
+      setResultado({ encontrado: false, termino: search });
+    } finally {
+      setCargando(false);
     }
   };
 
+  const handleSolicitud = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSolicitudError('');
+
+    try {
+      const res = await fetch('/api/solicitudes-verificacion', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nombre_plataforma: solicitudNombre || search,
+          email: solicitudEmail,
+          descripcion: solicitudDescripcion,
+        }),
+      });
+
+      if (res.ok) {
+        setSolicitudEnviada(true);
+        setSolicitudNombre('');
+        setSolicitudEmail('');
+        setSolicitudDescripcion('');
+      } else {
+        const error = await res.json();
+        setSolicitudError(error.error || 'Error al enviar la solicitud');
+      }
+    } catch {
+      setSolicitudError('Error de conexión. Intenta de nuevo.');
+    }
+  };
+
+  // Si se encontraron resultados, mostrarlos
+  if (resultado?.encontrado && resultado.data) {
+    return (
+      <section className="py-16 bg-papel">
+        <div className="container mx-auto px-6">
+          <div className="max-w-3xl mx-auto">
+            <h3 className="font-fraunces text-2xl font-bold text-tinta mb-4">
+              Resultados para "{search}"
+            </h3>
+            <div className="space-y-4">
+              {resultado.data.map((p) => (
+                <div key={p.id} className="bg-papel-light border border-oro/20 rounded-lg p-4 flex items-center justify-between">
+                  <div>
+                    <span className="font-fraunces font-bold text-tinta">{p.nombre}</span>
+                    <span className={`ml-3 text-xs font-ibm-mono px-2 py-0.5 rounded ${
+                      p.estado === 'verificada' ? 'bg-green-100 text-green-700' :
+                      p.estado === 'revision' ? 'bg-yellow-100 text-yellow-700' :
+                      'bg-red-100 text-red-700'
+                    }`}>
+                      {p.estado === 'verificada' ? 'Verificada' :
+                       p.estado === 'revision' ? 'En revisión' : 'No recomendada'}
+                    </span>
+                    {p.licencia && <span className="ml-3 text-sm text-tinta/50">Licencia: {p.licencia}</span>}
+                    {p.rating && <span className="ml-3 text-sm font-ibm-mono text-tinta/70">{p.rating}/10</span>}
+                  </div>
+                  <button className="px-4 py-1.5 bg-[#14213D] text-white text-sm font-inter rounded hover:bg-[#14213D]/90 transition-colors">
+                    Ver expediente
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Estado "no encontrado" - mostrar formulario de solicitud
+  if (resultado?.encontrado === false) {
+    return (
+      <section className="py-16 bg-papel">
+        <div className="container mx-auto px-6 max-w-2xl">
+          <div className="bg-[#FAF7F0] border border-oro/30 rounded-lg p-8 shadow-sm">
+            <div className="flex items-center gap-3 mb-4">
+              <span className="w-3 h-3 rounded-full bg-gray-400 inline-block" />
+              <span className="font-ibm-mono text-sm text-tinta/60">Todavía no analizamos esta plataforma</span>
+            </div>
+            <h3 className="font-fraunces text-2xl font-bold text-tinta mb-2">
+              Solicitá que la verifiquemos
+            </h3>
+            <p className="font-inter text-tinta/60 mb-6">
+              Completá el formulario y te avisaremos cuando tengamos el expediente listo.
+            </p>
+
+            {solicitudEnviada ? (
+              <div className="p-4 bg-green-50 border border-green-200 rounded text-green-700 font-inter text-sm">
+                ✅ ¡Solicitud enviada! Te avisaremos cuando la verificación esté lista.
+              </div>
+            ) : (
+              <form onSubmit={handleSolicitud} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-inter text-tinta/70 mb-1">Nombre de la plataforma</label>
+                  <input
+                    type="text"
+                    value={solicitudNombre || search}
+                    onChange={(e) => setSolicitudNombre(e.target.value)}
+                    className="w-full px-4 py-2 border border-tinta/20 rounded bg-white text-tinta font-inter text-sm focus:outline-none focus:ring-2 focus:ring-oro/50"
+                    placeholder="Ej: Joker.top"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-inter text-tinta/70 mb-1">Tu email</label>
+                  <input
+                    type="email"
+                    value={solicitudEmail}
+                    onChange={(e) => setSolicitudEmail(e.target.value)}
+                    className="w-full px-4 py-2 border border-tinta/20 rounded bg-white text-tinta font-inter text-sm focus:outline-none focus:ring-2 focus:ring-oro/50"
+                    placeholder="tu@email.com"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-inter text-tinta/70 mb-1">¿Por qué deberíamos analizarla?</label>
+                  <textarea
+                    value={solicitudDescripcion}
+                    onChange={(e) => setSolicitudDescripcion(e.target.value)}
+                    className="w-full px-4 py-2 border border-tinta/20 rounded bg-white text-tinta font-inter text-sm focus:outline-none focus:ring-2 focus:ring-oro/50 resize-y min-h-[100px]"
+                    placeholder="Contanos qué te gustaría que revisemos..."
+                    required
+                  />
+                </div>
+                {solicitudError && (
+                  <p className="text-sm text-red-600">{solicitudError}</p>
+                )}
+                <button
+                  type="submit"
+                  className="px-6 py-3 bg-[#14213D] text-white font-inter font-medium rounded hover:bg-[#14213D]/90 transition-colors"
+                  style={{ borderRadius: '4px' }}
+                >
+                  Enviar solicitud
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Vista inicial (buscador)
   return (
     <section className="py-16 bg-papel">
       <div className="container mx-auto px-6">
-        {/* Encabezado */}
         <div className="text-center max-w-3xl mx-auto">
           <span className="block font-ibm-mono text-xs tracking-[0.2em] text-[#B08D57] uppercase mb-2">
             VERIFICACIÓN INSTANTÁNEA
@@ -45,9 +212,8 @@ export const PlatformVerifier = () => {
           </p>
         </div>
 
-        {/* Buscador con botón */}
         <div className="max-w-[480px] mx-auto mt-8">
-          <form onSubmit={handleSubmit} className="flex">
+          <form onSubmit={handleSearch} className="flex">
             <div className="relative flex-1">
               <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#14213D]">
                 <SearchIcon />
@@ -63,15 +229,15 @@ export const PlatformVerifier = () => {
             </div>
             <button
               type="submit"
-              className="px-6 py-3 bg-[#14213D] text-white font-inter font-medium rounded-r hover:bg-[#14213D]/90 transition-colors whitespace-nowrap"
+              disabled={cargando}
+              className="px-6 py-3 bg-[#14213D] text-white font-inter font-medium rounded-r hover:bg-[#14213D]/90 transition-colors whitespace-nowrap disabled:opacity-50"
               style={{ borderRadius: '0 4px 4px 0' }}
             >
-              Verificar →
+              {cargando ? '...' : 'Verificar →'}
             </button>
           </form>
         </div>
 
-        {/* Badges de leyenda */}
         <div className="flex justify-center gap-6 mt-6">
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-[#3F6B4A]" />

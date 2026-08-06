@@ -18,8 +18,9 @@ export const Footer = () => {
           <div>
             <h4 className="font-fraunces text-papel font-bold mb-3">Legal</h4>
             <ul className="space-y-2 text-sm">
-              <li><Link href="/terminos" className="hover:text-papel transition-colors">Términos</Link></li>
-              <li><Link href="/privacidad" className="hover:text-papel transition-colors">Privacidad</Link></li>
+              <li><Link href="/sobre-nosotros" className="hover:text-papel transition-colors">Sobre nosotros</Link></li>
+              <li><Link href="/politica-privacidad" className="hover:text-papel transition-colors">Política de Privacidad</Link></li>
+              <li><Link href="/condiciones-de-uso" className="hover:text-papel transition-colors">Condiciones de Uso</Link></li>
               <li><Link href="/juego-responsable" className="hover:text-papel transition-colors">Juego Responsable</Link></li>
             </ul>
           </div>
@@ -38,11 +39,16 @@ export const Footer = () => {
             <h4 className="font-fraunces text-papel font-bold mb-3">Contacto</h4>
             <p className="text-sm">info@infobet.com</p>
             <p className="text-sm">Córdoba, Argentina</p>
+            <Link href="/#newsletter">
+              <button className="mt-4 px-6 py-2 bg-papel text-tinta font-inter font-medium rounded hover:bg-papel/90 transition-colors text-sm" style={{ borderRadius: '4px' }}>
+                Suscribirme
+              </button>
+            </Link>
           </div>
         </div>
 
         <div className="mt-8 pt-6 border-t border-papel/10 text-center text-xs">
-          &copy; {new Date().getFullYear()} InfoBet — Córdoba, Argentina. Todos los derechos reservados.
+          &copy; {new Date().getFullYear()} Infobet — Córdoba, Argentina. Todos los derechos reservados.
         </div>
       </div>
     </footer>
