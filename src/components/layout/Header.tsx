@@ -20,7 +20,7 @@ export const Header = () => {
           <img 
             src="https://img.infobetonline.com/logo.png" 
             alt="Infobet" 
-            className="h-8 w-auto"
+            className="h-16 w-auto"
           />
         </Link>
 

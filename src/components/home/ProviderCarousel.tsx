@@ -43,8 +43,8 @@ export const ProviderCarousel = () => {
                 <Image
                   src={provider.logo}
                   alt={provider.name}
-                  width={120}
-                  height={40}
+                  width={180}
+                  height={60}
                   className="h-8 w-auto object-contain"
                 />
               </div>
