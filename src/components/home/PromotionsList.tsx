@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 
 type Promocion = {
@@ -20,6 +21,7 @@ const statusColors: Record<string, string> = {
 };
 
 export const PromotionsList = () => {
+  const router = useRouter();
   const [promotions, setPromotions] = useState<Promocion[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -41,7 +43,16 @@ export const PromotionsList = () => {
 
   useEffect(() => {
     fetchPromotions();
-  }, []);
+
+    // Recargar los datos cada 30 segundos para mantenerlos frescos
+    const interval = setInterval(() => {
+      fetchPromotions();
+      // Forzar actualización del Router Cache
+      router.refresh();
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [router]);
 
   if (loading) {
     return (
@@ -57,7 +68,7 @@ export const PromotionsList = () => {
         <div className="container mx-auto px-6 text-center text-red-500">
           {error}
           <button
-            onClick={fetchPromotions}
+            onClick={() => { fetchPromotions(); router.refresh(); }}
             className="ml-4 px-4 py-2 bg-tinta text-white rounded hover:bg-tinta/90"
           >
             Reintentar
