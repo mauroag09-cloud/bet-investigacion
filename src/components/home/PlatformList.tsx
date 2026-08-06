@@ -1,5 +1,7 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { supabase } from '@/lib/supabase';
 import { Stamp } from '@/components/ui/Stamp';
 
 type Platform = {
@@ -13,22 +15,55 @@ type Platform = {
   logo_url?: string;
 };
 
-async function getPlatforms(): Promise<Platform[]> {
-  const { data, error } = await supabase
-    .from('plataformas')
-    .select('*')
-    .order('rating', { ascending: false });
+export const PlatformList = () => {
+  const [platforms, setPlatforms] = useState<Platform[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  if (error) {
-    console.error('Error al obtener plataformas:', error);
-    return [];
+  const fetchPlatforms = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch('/api/plataformas?_t=' + Date.now(), {
+        headers: { 'Cache-Control': 'no-cache' },
+      });
+      if (!res.ok) throw new Error('Error al cargar plataformas');
+      const data = await res.json();
+      setPlatforms(data);
+    } catch (err) {
+      setError('Error al cargar plataformas');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPlatforms();
+  }, []);
+
+  if (loading) {
+    return (
+      <section className="py-16 bg-papel">
+        <div className="container mx-auto px-6 text-center text-gray-500">Cargando plataformas...</div>
+      </section>
+    );
   }
 
-  return data || [];
-}
-
-export const PlatformList = async () => {
-  const platforms = await getPlatforms();
+  if (error) {
+    return (
+      <section className="py-16 bg-papel">
+        <div className="container mx-auto px-6 text-center text-red-500">
+          {error}
+          <button
+            onClick={fetchPlatforms}
+            className="ml-4 px-4 py-2 bg-tinta text-white rounded hover:bg-tinta/90"
+          >
+            Reintentar
+          </button>
+        </div>
+      </section>
+    );
+  }
 
   if (platforms.length === 0) {
     return (
