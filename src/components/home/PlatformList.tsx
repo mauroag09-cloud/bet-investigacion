@@ -13,6 +13,7 @@ type Platform = {
   rating?: number;
   resumen?: string;
   logo_url?: string;
+  link_fuente?: string; // Nueva columna
 };
 
 export const PlatformList = () => {
@@ -128,12 +129,23 @@ export const PlatformList = () => {
                 </p>
               )}
 
-              <Link
-                href={`/plataformas/${platform.slug}`}
-                className="mt-4 inline-block text-sm font-inter font-medium text-tinta hover:text-oro transition-colors"
-              >
-                Ver expediente completo →
-              </Link>
+              {platform.link_fuente ? (
+                <a
+                  href={platform.link_fuente}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-4 inline-block text-sm font-inter font-medium text-tinta hover:text-oro transition-colors"
+                >
+                  Ver expediente completo →
+                </a>
+              ) : (
+                <Link
+                  href={`/plataformas/${platform.slug}`}
+                  className="mt-4 inline-block text-sm font-inter font-medium text-tinta hover:text-oro transition-colors"
+                >
+                  Ver expediente completo →
+                </Link>
+              )}
             </div>
           ))}
         </div>
