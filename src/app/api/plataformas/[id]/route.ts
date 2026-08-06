@@ -2,11 +2,11 @@ import { NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
 
 export async function PUT(
-  req: Request,
+  request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params
-  const { nombre } = await req.json()
+  const { nombre } = await request.json()
 
   if (!nombre) {
     return NextResponse.json({ error: 'El nombre es requerido' }, { status: 400 })
