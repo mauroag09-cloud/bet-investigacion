@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
 
+// Forzar que la ruta nunca se sirva desde caché
+export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 export async function GET() {
@@ -13,5 +15,12 @@ export async function GET() {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 
-  return NextResponse.json(data || [])
+  // Devolver la respuesta con cabeceras que fuerzan no-cache
+  return NextResponse.json(data || [], {
+    headers: {
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0',
+    },
+  })
 }

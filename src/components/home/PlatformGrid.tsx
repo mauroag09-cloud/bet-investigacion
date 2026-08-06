@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Stamp } from '@/components/ui/Stamp';
+import { supabase } from '@/lib/supabase';
 
 type Platform = {
   id: string;
@@ -19,20 +20,38 @@ export const PlatformGrid = () => {
   const [platforms, setPlatforms] = useState<Platform[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const fetchPlatforms = async () => {
+    setLoading(true);
+    // Añadir timestamp para evitar caché del navegador
+    const { data, error } = await supabase
+      .from('plataformas')
+      .select('*')
+      .order('rating', { ascending: false });
+
+    if (!error && data) {
+      setPlatforms(data);
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
-    fetch('/api/plataformas?_t=' + Date.now())
-      .then(res => res.json())
-      .then(data => {
-        setPlatforms(data);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
+    fetchPlatforms();
   }, []);
 
   if (loading) {
     return (
       <section className="py-16 bg-papel">
         <div className="container mx-auto px-6 text-center text-gray-500">Cargando plataformas...</div>
+      </section>
+    );
+  }
+
+  if (platforms.length === 0) {
+    return (
+      <section className="py-16 bg-papel">
+        <div className="container mx-auto px-6 text-center text-gray-500">
+          No hay plataformas disponibles.
+        </div>
       </section>
     );
   }
@@ -75,7 +94,9 @@ export const PlatformGrid = () => {
                 </Stamp>
               </div>
 
-              <h3 className="font-fraunces text-xl font-bold text-tinta pr-16">{platform.nombre}</h3>
+              <h3 className="font-fraunces text-xl font-bold text-tinta pr-16">
+                {platform.nombre}
+              </h3>
 
               <div className="mt-2 font-ibm-mono text-3xl font-bold text-tinta">
                 {platform.rating || '—'}
@@ -83,7 +104,9 @@ export const PlatformGrid = () => {
               </div>
 
               {platform.resumen && (
-                <p className="mt-3 text-sm font-inter text-tinta/70 line-clamp-2">{platform.resumen}</p>
+                <p className="mt-3 text-sm font-inter text-tinta/70 line-clamp-2">
+                  {platform.resumen}
+                </p>
               )}
 
               <Link
