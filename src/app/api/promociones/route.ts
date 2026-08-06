@@ -6,23 +6,19 @@ export const revalidate = 0
 export async function GET() {
   const { data, error } = await supabase
     .from('promociones')
-    .select(`
-      *,
-      plataformas ( nombre )
-    `)
+    .select('*')
     .order('created_at', { ascending: false })
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 
-  // Mapeo para incluir el nombre de la plataforma
   const mapped = data?.map(item => ({
     id: item.id,
     plataforma_id: item.plataforma_id,
-    platform: item.plataformas?.nombre || 'Sin plataforma',
-    titulo: item.titulo || 'Sin título',
-    valor: item.valor || '0%',
+    platform: item.nombre_plataforma || 'Sin plataforma',  // ← USAR NUEVO CAMPO
+    titulo: item.titulo || '',
+    valor: item.valor || '',
     label: item.label || '',
     condicion: item.condicion || '',
     estado: item.estado || 'active',

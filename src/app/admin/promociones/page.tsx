@@ -13,20 +13,12 @@ type Promocion = {
   estado: string
 }
 
-type Plataforma = {
-  id: string
-  nombre: string
-}
-
 export default function AdminPromociones() {
   const [promociones, setPromociones] = useState<Promocion[]>([])
-  const [plataformas, setPlataformas] = useState<Plataforma[]>([])
   const [loading, setLoading] = useState(true)
-  const [editingPlatformId, setEditingPlatformId] = useState<string | null>(null)
-  const [editPlatformName, setEditPlatformName] = useState('')
 
   const [form, setForm] = useState({
-    plataforma_id: '',
+    nombre_plataforma: '',
     titulo: '',
     valor: '',
     label: '',
@@ -35,27 +27,20 @@ export default function AdminPromociones() {
   })
 
   const fetchPromociones = async () => {
-    const res = await fetch('/api/promociones-v2?_t=' + Date.now())
+    const res = await fetch('/api/promociones?_t=' + Date.now())
     const data = await res.json()
     setPromociones(data)
     setLoading(false)
   }
 
-  const fetchPlataformas = async () => {
-    const res = await fetch('/api/plataformas/list')
-    const data = await res.json()
-    setPlataformas(data)
-  }
-
   useEffect(() => {
     fetchPromociones()
-    fetchPlataformas()
   }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!form.plataforma_id) {
-      alert('Debes seleccionar una plataforma')
+    if (!form.nombre_plataforma.trim()) {
+      alert('El nombre de la plataforma es obligatorio')
       return
     }
     const res = await fetch('/api/promociones', {
@@ -64,9 +49,8 @@ export default function AdminPromociones() {
       body: JSON.stringify(form),
     })
     if (res.ok) {
-      setForm({ plataforma_id: '', titulo: '', valor: '', label: '', condicion: '', estado: 'active' })
+      setForm({ nombre_plataforma: '', titulo: '', valor: '', label: '', condicion: '', estado: 'active' })
       fetchPromociones()
-      fetchPlataformas()
     }
   }
 
@@ -74,33 +58,6 @@ export default function AdminPromociones() {
     if (confirm('¿Eliminar esta promoción?')) {
       await fetch(`/api/promociones/${id}`, { method: 'DELETE' })
       fetchPromociones()
-    }
-  }
-
-  const handleEditPlatform = (platformId: string, currentName: string) => {
-    setEditingPlatformId(platformId)
-    setEditPlatformName(currentName)
-  }
-
-  const handleSavePlatformName = async () => {
-    if (!editingPlatformId) return
-    if (!editPlatformName.trim()) {
-      alert('El nombre no puede estar vacío')
-      return
-    }
-    const res = await fetch(`/api/plataformas/${editingPlatformId}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nombre: editPlatformName.trim() }),
-    })
-    if (res.ok) {
-      setEditingPlatformId(null)
-      setEditPlatformName('')
-      fetchPlataformas() // refrescar dropdown
-      fetchPromociones() // refrescar lista
-    } else {
-      const error = await res.json()
-      alert('Error al actualizar: ' + error.error)
     }
   }
 
@@ -112,47 +69,13 @@ export default function AdminPromociones() {
 
       <form onSubmit={handleSubmit} className="bg-papel border border-oro/30 rounded-lg p-6 mb-8">
         <div className="grid grid-cols-2 gap-4">
-          {/* Select de plataformas con botón de edición */}
-          <div className="col-span-2 flex items-center gap-2">
-            <select
-              className="border p-2 rounded flex-1"
-              value={form.plataforma_id}
-              onChange={e => {
-                setForm({ ...form, plataforma_id: e.target.value })
-                // Si se selecciona una plataforma, cargar su nombre para edición
-                const plat = plataformas.find(p => p.id === e.target.value)
-                if (plat) {
-                  setEditPlatformName(plat.nombre)
-                  setEditingPlatformId(plat.id)
-                }
-              }}
-              required
-            >
-              <option value="">Seleccionar plataforma</option>
-              {plataformas.map(p => (
-                <option key={p.id} value={p.id}>{p.nombre}</option>
-              ))}
-            </select>
-            {editingPlatformId && (
-              <div className="flex items-center gap-2">
-                <input
-                  type="text"
-                  value={editPlatformName}
-                  onChange={(e) => setEditPlatformName(e.target.value)}
-                  className="border p-2 rounded w-48"
-                  placeholder="Nuevo nombre"
-                />
-                <button
-                  type="button"
-                  onClick={handleSavePlatformName}
-                  className="px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                >
-                  Guardar nombre
-                </button>
-              </div>
-            )}
-          </div>
-
+          <input
+            className="border p-2 rounded col-span-2"
+            placeholder="Nombre de la plataforma (ej: Joker.top)"
+            value={form.nombre_plataforma}
+            onChange={e => setForm({ ...form, nombre_plataforma: e.target.value })}
+            required
+          />
           <input
             className="border p-2 rounded"
             placeholder="Título"
@@ -199,17 +122,9 @@ export default function AdminPromociones() {
               <strong>{p.platform || 'Sin plataforma'}</strong> - {p.titulo} ({p.valor} {p.label})
               <div className="text-sm text-tinta/60">{p.condicion} · Estado: {p.estado}</div>
             </div>
-            <div className="flex gap-2">
-              <button
-                onClick={() => handleEditPlatform(p.plataforma_id, p.platform)}
-                className="text-blue-600 hover:text-blue-800"
-              >
-                Editar nombre
-              </button>
-              <button onClick={() => handleDelete(p.id)} className="text-red-600 hover:text-red-800">
-                Eliminar
-              </button>
-            </div>
+            <button onClick={() => handleDelete(p.id)} className="text-red-600 hover:text-red-800">
+              Eliminar
+            </button>
           </div>
         ))}
       </div>
