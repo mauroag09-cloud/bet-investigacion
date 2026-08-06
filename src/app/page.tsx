@@ -1,7 +1,7 @@
 import { Hero } from '@/components/home/Hero';
 import { ProviderCarousel } from '@/components/home/ProviderCarousel';
 import { PlatformVerifier } from '@/components/home/PlatformVerifier';
-import { PromotionsListList } from '@/components/home/PromotionsListList';
+import { PromotionsList } from '@/components/home/PromotionsList';
 import { ClaimsSection } from '@/components/home/ClaimsSection';
 import { PlatformGrid } from '@/components/home/PlatformGrid';
 import { Methodology } from '@/components/home/Methodology';
@@ -9,15 +9,13 @@ import { Values } from '@/components/home/Values';
 import { ResponsibleGaming } from '@/components/home/ResponsibleGaming';
 import { Newsletter } from '@/components/home/Newsletter';
 
-// Esto desactiva la caché de la página completa
-
 export default function HomePage() {
   return (
     <>
       <Hero />
       <ProviderCarousel />
       <PlatformVerifier />
-      <PromotionsListList />
+      <PromotionsList />
       <ClaimsSection />
       <PlatformGrid />
       <Methodology />
@@ -27,5 +25,3 @@ export default function HomePage() {
     </>
   );
 }
-
-export const revalidate = 0;
