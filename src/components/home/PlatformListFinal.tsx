@@ -23,7 +23,9 @@ export const PlatformListFinal = () => {
         <h2 className="font-fraunces text-3xl font-bold text-tinta mb-4">Índice de plataformas analizadas</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {platforms.map((p: any) => {
-            const link = p['link-fuente'];
+            // 🔥 ENLACE FIJO DE PRUEBA (para ver si el mecanismo funciona)
+            const testLink = 'https://www.google.com';
+
             return (
               <div key={p.id} className="bg-papel-light border border-oro/20 rounded-lg p-6 relative hover:shadow-lg transition-all hover:-translate-y-1">
                 <div className="absolute top-4 right-4">
@@ -34,13 +36,14 @@ export const PlatformListFinal = () => {
                 <h3 className="font-fraunces text-xl font-bold text-tinta pr-16">{p.nombre}</h3>
                 <div className="mt-2 font-ibm-mono text-3xl font-bold text-tinta">{p.rating || '—'}<span className="text-sm font-inter font-normal text-tinta/50">/10</span></div>
                 {p.resumen && <p className="mt-3 text-sm font-inter text-tinta/70 line-clamp-2">{p.resumen}</p>}
-                {link ? (
-                  <a href={link} target="_blank" rel="noopener noreferrer" className="mt-4 inline-block text-sm font-inter font-medium text-blue-600 hover:underline">
-                    Ver expediente completo →
-                  </a>
-                ) : (
-                  <span className="mt-4 inline-block text-sm text-gray-400">Sin expediente</span>
-                )}
+                <a
+                  href={testLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-4 inline-block text-sm font-inter font-medium text-blue-600 hover:underline"
+                >
+                  Ver expediente completo →
+                </a>
               </div>
             );
           })}
