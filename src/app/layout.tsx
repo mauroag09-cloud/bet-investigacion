@@ -1,14 +1,16 @@
+"use client";
+
 import './globals.css';
-import { Inter } from 'next/font/google';
+import { Poppins } from 'next/font/google';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
+import { motion, MotionConfig } from 'framer-motion';
 
-const inter = Inter({ subsets: ['latin'] });
-
-export const metadata = {
-  title: 'BetInvestigación | Reputación de Plataformas de Apuestas',
-  description: 'Análisis independiente, rankings y reclamos de casinos y casas de apuestas.',
-};
+const poppins = Poppins({
+  subsets: ['latin'],
+  weight: ['300', '400', '700'],
+  display: 'swap',
+});
 
 export default function RootLayout({
   children,
@@ -17,9 +19,20 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es" className="dark">
-      <body className={`${inter.className} min-h-screen flex flex-col bg-gray-50 dark:bg-gray-950`}>
+      <body className={`${poppins.className} min-h-screen flex flex-col bg-gray-950`}>
         <Header />
-        <main className="flex-1">{children}</main>
+        <main className="flex-1">
+          <MotionConfig transition={{ duration: 0.3, ease: [0.43, 0.13, 0.23, 0.96] }}>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              className="w-full"
+            >
+              {children}
+            </motion.div>
+          </MotionConfig>
+        </main>
         <Footer />
       </body>
     </html>

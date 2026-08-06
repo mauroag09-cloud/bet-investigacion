@@ -1,26 +1,49 @@
 import Link from 'next/link';
-import { FaFacebook, FaTwitter, FaInstagram, FaYoutube } from 'react-icons/fa';
+import { Facebook, Twitter, Instagram, Youtube } from 'lucide-react';
 
 export const Footer = () => {
   return (
-    <footer className="border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-950/50">
-      <div className="container mx-auto px-4 py-12">
+    <footer className="bg-tinta text-papel/60 border-t border-papel/10">
+      <div className="container mx-auto px-6 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
-            <h3 className="font-bold text-xl text-blue-600 dark:text-blue-400 mb-4">Bet<span className="text-violet-500">Investigación</span></h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">Análisis independiente de plataformas de apuestas. Transparencia y confianza desde 2024.</p>
-            <div className="flex gap-3 mt-4">
-              <a href="#" className="text-gray-400 hover:text-blue-600 transition-colors"><FaFacebook className="w-5 h-5" /></a>
-              <a href="#" className="text-gray-400 hover:text-blue-600 transition-colors"><FaTwitter className="w-5 h-5" /></a>
-              <a href="#" className="text-gray-400 hover:text-blue-600 transition-colors"><FaInstagram className="w-5 h-5" /></a>
-              <a href="#" className="text-gray-400 hover:text-blue-600 transition-colors"><FaYoutube className="w-5 h-5" /></a>
+            <Link href="/" className="font-fraunces text-2xl font-bold text-papel">
+              Info<span className="text-oro">Bet</span>
+            </Link>
+            <p className="text-sm mt-2 max-w-xs">
+              Verificamos apuestas para que no tengas que arriesgarte a ciegas.
+            </p>
+          </div>
+
+          <div>
+            <h4 className="font-fraunces text-papel font-bold mb-3">Legal</h4>
+            <ul className="space-y-2 text-sm">
+              <li><Link href="/terminos" className="hover:text-papel transition-colors">Términos</Link></li>
+              <li><Link href="/privacidad" className="hover:text-papel transition-colors">Privacidad</Link></li>
+              <li><Link href="/juego-responsable" className="hover:text-papel transition-colors">Juego Responsable</Link></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-fraunces text-papel font-bold mb-3">Redes</h4>
+            <div className="flex gap-3">
+              <a href="#" className="hover:text-papel transition-colors"><Facebook className="w-5 h-5" /></a>
+              <a href="#" className="hover:text-papel transition-colors"><Twitter className="w-5 h-5" /></a>
+              <a href="#" className="hover:text-papel transition-colors"><Instagram className="w-5 h-5" /></a>
+              <a href="#" className="hover:text-papel transition-colors"><Youtube className="w-5 h-5" /></a>
             </div>
           </div>
-          <div><h4 className="font-semibold mb-3">Plataformas</h4><ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400"><li><Link href="/plataformas">Ver todas</Link></li><li><Link href="/ranking">Ranking</Link></li></ul></div>
-          <div><h4 className="font-semibold mb-3">Recursos</h4><ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400"><li><Link href="/noticias">Noticias</Link></li><li><Link href="/reclamos">Reclamos</Link></li></ul></div>
-          <div><h4 className="font-semibold mb-3">Legal</h4><ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400"><li><Link href="/terminos">Términos</Link></li><li><Link href="/privacidad">Privacidad</Link></li></ul></div>
+
+          <div>
+            <h4 className="font-fraunces text-papel font-bold mb-3">Contacto</h4>
+            <p className="text-sm">info@infobet.com</p>
+            <p className="text-sm">Córdoba, Argentina</p>
+          </div>
         </div>
-        <div className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-800 text-center text-sm text-gray-600 dark:text-gray-400">&copy; {new Date().getFullYear()} BetInvestigación. Todos los derechos reservados.</div>
+
+        <div className="mt-8 pt-6 border-t border-papel/10 text-center text-xs">
+          &copy; {new Date().getFullYear()} InfoBet — Córdoba, Argentina. Todos los derechos reservados.
+        </div>
       </div>
     </footer>
   );
