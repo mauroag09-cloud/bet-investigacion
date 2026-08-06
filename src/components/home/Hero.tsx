@@ -38,7 +38,7 @@ export const Hero = () => {
               transition={{ delay: 0.3, duration: 0.5 }}
               className="mt-8 flex flex-wrap items-center gap-4"
             >
-              <Link href="/reseñas">
+              <Link href="/resenas">
                 <button className="px-6 py-3 bg-tinta text-white text-sm font-inter font-medium rounded transition-all hover:bg-tinta/90">
                   Ver reseñas →
                 </button>

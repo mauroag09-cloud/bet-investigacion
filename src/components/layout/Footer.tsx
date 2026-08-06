@@ -10,7 +10,7 @@ export const Footer = () => {
             <Link href="/" className="font-fraunces text-2xl font-bold text-papel">
               Info<span className="text-oro">Bet</span>
             </Link>
-            <p className="text-sm mt-2 max-w-xs">Verificamos apuestas para que no tengas que arriesgarte a ciegas.</p>
+            <p className="text-sm mt-2 max-w-xs">Verificamos plataformas para que no tengas que arriesgarte a ciegas.</p>
           </div>
 
           <div>
