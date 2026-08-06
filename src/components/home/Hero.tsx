@@ -12,17 +12,8 @@ export const Hero = () => {
 
       <Container className="relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 items-center">
-          {/* Columna izquierda: texto (3/5 del grid) */}
+          {/* Columna izquierda: texto */}
           <div className="lg:col-span-3">
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
-              className="inline-block font-ibm-mono text-xs tracking-[0.2em] text-tinta/50 border border-tinta/10 px-3 py-1.5 rounded-sm mb-6"
-            >
-              EXPEDIENTE N° 001 — AGOSTO 2026
-            </motion.div>
-
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -58,7 +49,7 @@ export const Hero = () => {
             </motion.div>
           </div>
 
-          {/* Columna derecha: sello (2/5 del grid) */}
+          {/* Columna derecha: sello */}
           <motion.div
             initial={{ opacity: 0, scale: 0.8, rotate: -12 }}
             animate={{ opacity: 1, scale: 1, rotate: -6 }}
