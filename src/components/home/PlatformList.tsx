@@ -35,24 +35,26 @@ export const PlatformList = () => {
     fetchPlatforms();
   }, []);
 
-  if (loading) {
-    return <div className="py-16 text-center text-gray-500">Cargando...</div>;
-  }
+  const handleOpenLink = (url: string) => {
+    if (url && url.trim()) {
+      // Intentar abrir con window.open (más fiable que <a> en algunos casos)
+      window.open(url.trim(), '_blank', 'noopener,noreferrer');
+    } else {
+      alert('No hay enlace disponible para esta plataforma');
+    }
+  };
 
-  if (platforms.length === 0) {
-    return <div className="py-16 text-center text-gray-500">No hay plataformas.</div>;
-  }
+  if (loading) return <div className="py-16 text-center text-gray-500">Cargando...</div>;
+  if (platforms.length === 0) return <div className="py-16 text-center text-gray-500">No hay plataformas.</div>;
 
   return (
     <section className="py-16 bg-papel">
       <div className="container mx-auto px-6">
-        <h2 className="font-fraunces text-3xl md:text-4xl text-tinta font-bold mb-4">
-          Índice de plataformas analizadas
-        </h2>
+        <h2 className="font-fraunces text-3xl md:text-4xl text-tinta font-bold mb-4">Índice de plataformas analizadas</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {platforms.map((platform) => {
-            const link = platform['link-fuente'];
-            const hasValidLink = link && (link.startsWith('http://') || link.startsWith('https://'));
+            const link = platform['link-fuente'] || '';
+            const hasLink = link.trim().length > 0;
 
             return (
               <div key={platform.id} className="bg-papel-light border border-oro/20 rounded-lg p-6 relative hover:shadow-lg transition-all hover:-translate-y-1">
@@ -66,15 +68,21 @@ export const PlatformList = () => {
                 <h3 className="font-fraunces text-xl font-bold text-tinta pr-16">{platform.nombre}</h3>
                 <div className="mt-2 font-ibm-mono text-3xl font-bold text-tinta">{platform.rating || '—'}<span className="text-sm font-inter font-normal text-tinta/50">/10</span></div>
                 {platform.resumen && <p className="mt-3 text-sm font-inter text-tinta/70 line-clamp-2">{platform.resumen}</p>}
-                {hasValidLink ? (
-                  <a
-                    href={link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-4 inline-block text-sm font-inter font-medium text-blue-600 hover:underline"
+
+                {/* Depuración: mostrar el valor de link-fuente (solo visible para administradores) */}
+                {hasLink && (
+                  <div className="mt-2 text-xs text-gray-400 break-all">
+                    🔗 Link: {link}
+                  </div>
+                )}
+
+                {hasLink ? (
+                  <button
+                    onClick={() => handleOpenLink(link)}
+                    className="mt-4 inline-block text-sm font-inter font-medium text-blue-600 hover:underline cursor-pointer"
                   >
                     Ver expediente completo →
-                  </a>
+                  </button>
                 ) : (
                   <span className="mt-4 inline-block text-sm text-gray-400">Sin expediente</span>
                 )}
