@@ -182,7 +182,7 @@ export const PlatformVerifier = () => {
       <div className="container mx-auto px-6">
         <div className="text-center max-w-3xl mx-auto">
           <span className="block font-ibm-mono text-xs tracking-[0.2em] text-[#B08D57] uppercase mb-2">VERIFICACIÓN INSTANTÁNEA</span>
-          <h2 className="font-fraunces text-3xl md:text-4xl font-bold text-[#14213D]">¿Es segura tu plataforma de iGaming?</h2>
+          <h2 className="font-fraunces text-3xl md:text-4xl font-bold text-[#14213D]">¿Confi00e1s en tu casa de apuestas?</h2>
           <p className="mt-2 font-inter text-sm text-[#14213D]/60 max-w-md mx-auto">Ingresá el nombre de cualquier plataforma de iGaming y te decimos si está verificada, su licencia y el historial de reclamos.</p>
         </div>
 

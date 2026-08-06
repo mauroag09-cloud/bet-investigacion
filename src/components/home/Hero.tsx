@@ -28,7 +28,7 @@ export const Hero = () => {
               transition={{ delay: 0.1, duration: 0.5 }}
               className="font-fraunces text-4xl md:text-5xl lg:text-6xl text-tinta leading-[1.1] tracking-tight max-w-3xl"
             >
-              Verificamos las apuestas para que vos no tengas que arriesgarte a ciegas.
+              La verificaci00f3n que necesit00e1s antes de confiar en una plataforma de iGaming.
             </motion.h1>
 
             <motion.p
