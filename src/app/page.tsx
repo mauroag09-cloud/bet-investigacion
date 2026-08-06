@@ -1,3 +1,6 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import { Hero } from '@/components/home/Hero';
 import { ProviderCarousel } from '@/components/home/ProviderCarousel';
 import { PlatformVerifier } from '@/components/home/PlatformVerifier';
@@ -24,15 +27,4 @@ export default function HomePage() {
       <Newsletter />
     </>
   );
-}
-
-function TestApi() {
-  const [data, setData] = useState(null);
-  useEffect(() => {
-    fetch('/api/plataformas')
-      .then(res => res.json())
-      .then(setData)
-      .catch(() => setData({error: 'falló'}));
-  }, []);
-  return <pre>{JSON.stringify(data, null, 2)}</pre>;
 }
