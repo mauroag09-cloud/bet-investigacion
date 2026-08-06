@@ -15,6 +15,7 @@ type Platform = {
   logo_url?: string;
 };
 
+// Forzar rebuild para actualizar datos
 export const PlatformGrid = () => {
   const [platforms, setPlatforms] = useState<Platform[]>([]);
   const [loading, setLoading] = useState(true);
