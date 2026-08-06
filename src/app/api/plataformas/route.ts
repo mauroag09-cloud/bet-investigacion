@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
 
+// Esto desactiva TODA la caché para esta API Route
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
   const { data, error } = await supabase
     .from('plataformas')

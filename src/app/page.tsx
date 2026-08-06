@@ -9,6 +9,9 @@ import { Values } from '@/components/home/Values';
 import { ResponsibleGaming } from '@/components/home/ResponsibleGaming';
 import { Newsletter } from '@/components/home/Newsletter';
 
+// Esto desactiva la caché de la página completa
+export const dynamic = 'force-dynamic'
+
 export default function HomePage() {
   return (
     <>
