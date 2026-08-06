@@ -1,4 +1,5 @@
 'use client';
+import { Container } from "@/components/ui/Container";
 
 import { motion } from 'framer-motion';
 
@@ -19,7 +20,7 @@ const statusColors = {
 export const Promotions = () => {
   return (
     <section className="py-16 bg-papel border-t border-[#B08D57]/10">
-      <div className="container mx-auto px-6">
+      <Container>
         <div className="text-center max-w-2xl mx-auto">
           <span className="block font-ibm-mono text-xs tracking-[0.2em] text-[#B08D57] uppercase mb-2">OFERTAS VERIFICADAS</span>
           <h2 className="font-fraunces text-3xl md:text-4xl font-bold text-[#14213D]">Promociones Destacadas</h2>

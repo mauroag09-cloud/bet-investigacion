@@ -1,4 +1,5 @@
 'use client';
+import { Container } from "@/components/ui/Container";
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -88,7 +89,7 @@ export const PlatformVerifier = () => {
   if (resultado?.encontrado && resultado.data) {
     return (
       <section className="py-16 bg-papel">
-        <div className="container mx-auto px-6">
+        <Container>
           <div className="max-w-3xl mx-auto">
             <h3 className="font-fraunces text-2xl font-bold text-tinta mb-4">Resultados para "{search}"</h3>
             <div className="space-y-4">
@@ -179,7 +180,7 @@ export const PlatformVerifier = () => {
   // Vista inicial (buscador)
   return (
     <section className="py-16 bg-papel">
-      <div className="container mx-auto px-6">
+      <Container>
         <div className="text-center max-w-3xl mx-auto">
           <span className="block font-ibm-mono text-xs tracking-[0.2em] text-[#B08D57] uppercase mb-2">VERIFICACIÓN INSTANTÁNEA</span>
           <h2 className="font-fraunces text-3xl md:text-4xl font-bold text-[#14213D]">¿Confi00e1s en tu casa de apuestas?</h2>

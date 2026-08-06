@@ -1,11 +1,12 @@
 'use client';
+import { Container } from "@/components/ui/Container";
 
 import Link from 'next/link';
 
 export const ResponsibleGaming = () => {
   return (
     <section className="py-16 bg-tinta text-papel">
-      <div className="container mx-auto px-6 text-center max-w-3xl">
+      <Container className="text-center max-w-3xl">
         <span className="inline-block font-ibm-mono text-xs tracking-[0.2em] text-oro mb-4">
           JUEGO RESPONSABLE
         </span>

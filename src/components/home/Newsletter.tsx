@@ -1,4 +1,5 @@
 'use client';
+import { Container } from "@/components/ui/Container";
 
 import { useState } from 'react';
 import Link from 'next/link';
@@ -41,7 +42,7 @@ export const Newsletter = () => {
 
   return (
     <section id="newsletter" className="py-16 bg-papel border-t border-oro/10">
-      <div className="container mx-auto px-6 max-w-2xl text-center">
+      <Container className="max-w-2xl text-center">
         <div className="flex justify-center mb-6">
           <Stamp variant="verified" size="lg" rotation={-4}>
             <span className="text-2xl font-fraunces font-bold">✉</span>

@@ -3,15 +3,16 @@
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Stamp } from '@/components/ui/Stamp';
+import { Container } from '@/components/ui/Container';
 
 export const Hero = () => {
   return (
     <section className="relative overflow-hidden bg-papel pt-24 pb-16">
       <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiMxQTFBMkUiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PHBhdGggZD0iTTM2IDM0djItaC0ydi0yaDJ6bTAgLTR2MmgtMnYtMmgyeiIvPjwvZz48L2c+PC9zdmc+')] opacity-50 -z-10" />
 
-      <div className="container mx-auto px-6">
+      <Container className="relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 items-center">
-          {/* Texto */}
+          {/* Columna izquierda: texto (3/5 del grid) */}
           <div className="lg:col-span-3">
             <motion.div
               initial={{ opacity: 0, y: 10 }}
@@ -28,7 +29,7 @@ export const Hero = () => {
               transition={{ delay: 0.1, duration: 0.5 }}
               className="font-fraunces text-4xl md:text-5xl lg:text-6xl text-tinta leading-[1.1] tracking-tight max-w-3xl"
             >
-              La verificaci00f3n que necesit00e1s antes de confiar en una plataforma de iGaming.
+              La verificación que necesitás antes de confiar en una plataforma de iGaming.
             </motion.h1>
 
             <motion.p
@@ -57,7 +58,7 @@ export const Hero = () => {
             </motion.div>
           </div>
 
-          {/* Sello flotante */}
+          {/* Columna derecha: sello (2/5 del grid) */}
           <motion.div
             initial={{ opacity: 0, scale: 0.8, rotate: -12 }}
             animate={{ opacity: 1, scale: 1, rotate: -6 }}
@@ -72,7 +73,7 @@ export const Hero = () => {
             </Stamp>
           </motion.div>
         </div>
-      </div>
+      </Container>
     </section>
   );
 };

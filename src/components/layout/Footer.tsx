@@ -1,10 +1,11 @@
 import Link from 'next/link';
+import { Container } from "@/components/ui/Container";
 import { Facebook, Twitter, Instagram, Youtube } from 'lucide-react';
 
 export const Footer = () => {
   return (
     <footer className="bg-tinta text-papel/60 border-t border-papel/10">
-      <div className="container mx-auto px-6 py-12">
+      <Container className="py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <Link href="/" className="font-fraunces text-2xl font-bold text-papel">

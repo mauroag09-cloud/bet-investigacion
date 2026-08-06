@@ -1,4 +1,5 @@
 'use client';
+import { Container } from "@/components/ui/Container";
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -40,7 +41,7 @@ const statusConfig = {
 export const ClaimsSection = () => {
   return (
     <section className="py-16 bg-[#F5F0E6] border-y border-[#B08D57]/20">
-      <div className="container mx-auto px-6">
+      <Container>
         <div className="text-center max-w-3xl mx-auto">
           <div className="flex justify-center mb-4">
             <Stamp variant="danger" size="md" rotation={-4}>

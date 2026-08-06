@@ -1,4 +1,5 @@
 'use client';
+import { Container } from "@/components/ui/Container";
 
 export const Methodology = () => {
   const steps = [
@@ -10,7 +11,7 @@ export const Methodology = () => {
 
   return (
     <section id="metodologia" className="py-16 bg-tinta text-papel">
-      <div className="container mx-auto px-6">
+      <Container>
         <h2 className="font-fraunces text-3xl md:text-4xl font-bold mb-4">
           Metodología
         </h2>

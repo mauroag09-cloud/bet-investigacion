@@ -1,4 +1,5 @@
 'use client';
+import { Container } from "@/components/ui/Container";
 
 import { Stamp } from '@/components/ui/Stamp';
 
@@ -24,7 +25,7 @@ const values = [
 export const Values = () => {
   return (
     <section className="py-16 bg-papel-light border-y border-oro/10">
-      <div className="container mx-auto px-6">
+      <Container>
         <h2 className="font-fraunces text-3xl md:text-4xl text-tinta font-bold mb-4">
           Nuestra Misión y Valores
         </h2>
