@@ -1,4 +1,3 @@
-import Link from "next/link";
 'use client';
 
 import Link from 'next/link';
@@ -17,27 +16,27 @@ export const Header = () => {
       className="sticky top-0 z-50 w-full border-b border-white/5 bg-gray-950/90 backdrop-blur-xl"
     >
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <a href="/" className="flex items-center">
+        <Link href="/" className="flex items-center">
           <img 
             src="https://img.infobetonline.com/logo.png" 
             alt="Infobet" 
             className="h-16 w-auto"
           />
-        </a>
+        </Link>
 
         <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
-          <a href="/" className="text-gray-400 hover:text-white transition-colors duration-300 relative group">
+          <Link href="/" className="text-gray-400 hover:text-white transition-colors duration-300 relative group">
             Home
             <span className="absolute inset-x-0 -bottom-1 h-0.5 bg-gradient-to-r from-blue-500 via-gold-400 to-violet-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
-          </a>
+          </Link>
           <Link href="/sobre-nosotros" className="text-gray-400 hover:text-white transition-colors duration-300 relative group">
             Quiénes somos
             <span className="absolute inset-x-0 -bottom-1 h-0.5 bg-gradient-to-r from-blue-500 via-gold-400 to-violet-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
-          </a>
+          </Link>
           <Link href="/juego-responsable" className="text-gray-400 hover:text-white transition-colors duration-300 relative group">
             Juego Responsable
             <span className="absolute inset-x-0 -bottom-1 h-0.5 bg-gradient-to-r from-blue-500 via-gold-400 to-violet-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
-          </a>
+          </Link>
         </nav>
 
         <div className="flex items-center gap-3">
@@ -49,7 +48,7 @@ export const Header = () => {
                 <UserPlus className="w-4 h-4" /> Suscribirme
               </span>
             </button>
-          </a>
+          </Link>
           <button className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
             {isMenuOpen ? <X className="w-6 h-6 text-white" /> : <Menu className="w-6 h-6 text-white" />}
           </button>
@@ -58,4 +57,3 @@ export const Header = () => {
     </motion.header>
   );
 };
- 
