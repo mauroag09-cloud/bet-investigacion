@@ -1,7 +1,7 @@
 import { Hero } from '@/components/home/Hero';
 import { ProviderCarousel } from '@/components/home/ProviderCarousel';
 import { PlatformVerifier } from '@/components/home/PlatformVerifier';
-import { Promotions } from '@/components/home/Promotions';
+import { PromotionsListList } from '@/components/home/PromotionsListList';
 import { ClaimsSection } from '@/components/home/ClaimsSection';
 import { PlatformGrid } from '@/components/home/PlatformGrid';
 import { Methodology } from '@/components/home/Methodology';
@@ -17,7 +17,7 @@ export default function HomePage() {
       <Hero />
       <ProviderCarousel />
       <PlatformVerifier />
-      <Promotions />
+      <PromotionsListList />
       <ClaimsSection />
       <PlatformGrid />
       <Methodology />
