@@ -25,3 +25,4 @@ export async function GET() {
 
   return NextResponse.json(mapped)
 }
+// Forzar redeploy Thu Aug  6 12:28:46 UTC 2026
