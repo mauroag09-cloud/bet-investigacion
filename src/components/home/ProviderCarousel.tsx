@@ -1,19 +1,22 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 const providers = [
-  { name: 'AMING', logo: 'https://via.placeholder.com/120x40/1a1a2e/white?text=AMING' },
-  { name: 'NETENT', logo: 'https://via.placeholder.com/120x40/1a1a2e/white?text=NETENT' },
-  { name: 'NOLIMIT', logo: 'https://via.placeholder.com/120x40/1a1a2e/white?text=NOLIMIT' },
-  { name: 'CASINO GURU', logo: 'https://via.placeholder.com/120x40/1a1a2e/white?text=CASINO+GURU' },
-  { name: 'PR&NETGAMING', logo: 'https://via.placeholder.com/120x40/1a1a2e/white?text=PR%26NETGAMING' },
-  { name: 'PRAGMATIC', logo: 'https://via.placeholder.com/120x40/1a1a2e/white?text=PRAGMATIC' },
-  { name: 'SPRIBE', logo: 'https://via.placeholder.com/120x40/1a1a2e/white?text=SPRIBE' },
-  { name: 'CRYPTOVEGA', logo: 'https://via.placeholder.com/120x40/1a1a2e/white?text=CRYPTOVEGA' },
-  { name: 'Ezugi', logo: 'https://via.placeholder.com/120x40/1a1a2e/white?text=Ezugi' },
-  { name: 'Evolution', logo: 'https://via.placeholder.com/120x40/1a1a2e/white?text=Evolution' },
-  { name: 'bluepr', logo: 'https://via.placeholder.com/120x40/1a1a2e/white?text=bluepr' },
+  { name: 'IMG_4035', logo: '/providers/IMG_4035.png' },
+  { name: 'IMG_4037', logo: '/providers/IMG_4037.png' },
+  { name: 'IMG_4038', logo: '/providers/IMG_4038.png' },
+  { name: 'IMG_4039', logo: '/providers/IMG_4039.png' },
+  { name: 'IMG_4040', logo: '/providers/IMG_4040.png' },
+  { name: 'IMG_4041', logo: '/providers/IMG_4041.png' },
+  { name: 'IMG_4042', logo: '/providers/IMG_4042.png' },
+  { name: 'IMG_4045', logo: '/providers/IMG_4045.png' },
+  { name: 'IMG_4046', logo: '/providers/IMG_4046.png' },
+  { name: 'IMG_4047', logo: '/providers/IMG_4047.png' },
+  { name: 'IMG_4048', logo: '/providers/IMG_4048.png' },
+  { name: 'IMG_4049', logo: '/providers/IMG_4049.png' },
+  { name: 'IMG_4051', logo: '/providers/IMG_4051.png' },
 ];
 
 export const ProviderCarousel = () => {
@@ -37,10 +40,12 @@ export const ProviderCarousel = () => {
                 key={`${provider.name}-${idx}`}
                 className="flex-shrink-0 opacity-30 hover:opacity-70 transition-opacity"
               >
-                <img
+                <Image
                   src={provider.logo}
                   alt={provider.name}
-                  className="h-8 w-auto"
+                  width={120}
+                  height={40}
+                  className="h-8 w-auto object-contain"
                 />
               </div>
             ))}
