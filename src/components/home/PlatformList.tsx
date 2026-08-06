@@ -35,14 +35,6 @@ export const PlatformList = () => {
     fetchPlatforms();
   }, []);
 
-  const handleOpenLink = (url: string) => {
-    if (url && (url.startsWith('http://') || url.startsWith('https://'))) {
-      window.open(url, '_blank', 'noopener,noreferrer');
-    } else {
-      alert('El enlace no es válido o no está disponible.');
-    }
-  };
-
   if (loading) {
     return <div className="py-16 text-center text-gray-500">Cargando...</div>;
   }
@@ -75,12 +67,14 @@ export const PlatformList = () => {
                 <div className="mt-2 font-ibm-mono text-3xl font-bold text-tinta">{platform.rating || '—'}<span className="text-sm font-inter font-normal text-tinta/50">/10</span></div>
                 {platform.resumen && <p className="mt-3 text-sm font-inter text-tinta/70 line-clamp-2">{platform.resumen}</p>}
                 {hasValidLink ? (
-                  <button
-                    onClick={() => handleOpenLink(link)}
-                    className="mt-4 inline-block text-sm font-inter font-medium text-blue-600 hover:underline cursor-pointer"
+                  <a
+                    href={link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-4 inline-block text-sm font-inter font-medium text-blue-600 hover:underline"
                   >
                     Ver expediente completo →
-                  </button>
+                  </a>
                 ) : (
                   <span className="mt-4 inline-block text-sm text-gray-400">Sin expediente</span>
                 )}
