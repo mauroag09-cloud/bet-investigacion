@@ -5,13 +5,12 @@ import { motion } from 'framer-motion';
 
 type Promocion = {
   id: string;
-  plataforma_id: string;
-  título: string;
+  platform: string;
+  titulo: string;
   valor: string;
   label: string;
   condicion: string;
   estado: string;
-  created_at: string;
 };
 
 const statusColors: Record<string, string> = {
@@ -28,16 +27,12 @@ export const PromotionsList = () => {
   const fetchPromotions = async () => {
     setLoading(true);
     setError(null);
-    const url = '/api/promociones?_t=' + Date.now();
-    console.log('🔍 Fetching promociones:', url);
     try {
-      const res = await fetch(url);
+      const res = await fetch('/api/promociones?_t=' + Date.now());
       if (!res.ok) throw new Error('Error en la API');
       const data = await res.json();
-      console.log('📦 Datos recibidos:', data);
       setPromotions(data);
     } catch (err) {
-      console.error('❌ Error:', err);
       setError('Error al cargar promociones');
     } finally {
       setLoading(false);
@@ -108,7 +103,7 @@ export const PromotionsList = () => {
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
-                      <span className="font-ibm-mono text-[11px] tracking-wider uppercase text-[#14213D]/70">{promo.plataforma_id}</span>
+                      <span className="font-ibm-mono text-[11px] tracking-wider uppercase text-[#14213D]/70">{promo.platform}</span>
                     </div>
                   </div>
                   <div className="text-center py-2">

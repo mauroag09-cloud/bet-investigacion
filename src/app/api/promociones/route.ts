@@ -6,12 +6,34 @@ export const revalidate = 0
 export async function GET() {
   const { data, error } = await supabase
     .from('promociones')
-    .select('*')
+    .select(`
+      id,
+      plataforma_id,
+      "título",
+      valor,
+      label,
+      condicion,
+      estado,
+      created_at,
+      plataformas ( nombre )
+    `)
     .order('created_at', { ascending: false })
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 
-  return NextResponse.json(data || [])
+  // Mapear para que el frontend reciba los nombres correctos
+  const mapped = data?.map(item => ({
+    id: item.id,
+    plataforma_id: item.plataforma_id,
+    platform: item.plataformas?.nombre || 'Sin plataforma',
+    titulo: item["título"] || 'Sin título',
+    valor: item.valor || '0%',
+    label: item.label || '',
+    condicion: item.condicion || '',
+    estado: item.estado || 'active',
+  })) || []
+
+  return NextResponse.json(mapped)
 }
