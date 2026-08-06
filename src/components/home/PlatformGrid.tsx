@@ -13,7 +13,6 @@ type Platform = {
   logo_url?: string;
 };
 
-// Esta función se ejecuta en el servidor
 async function getPlatforms(): Promise<Platform[]> {
   const { data, error } = await supabase
     .from('plataformas')
@@ -28,7 +27,6 @@ async function getPlatforms(): Promise<Platform[]> {
   return data || [];
 }
 
-// Server Component
 export const PlatformGrid = async () => {
   const platforms = await getPlatforms();
 
