@@ -6,17 +6,22 @@ export const revalidate = 0
 export async function GET() {
   const { data, error } = await supabase
     .from('promociones')
-    .select('*')
+    .select(`
+      *,
+      plataformas ( nombre )
+    `)
     .order('created_at', { ascending: false })
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 
+  // Mapeo para incluir el nombre de la plataforma
   const mapped = data?.map(item => ({
     id: item.id,
     plataforma_id: item.plataforma_id,
-    titulo: item.titulo || 'Sin título',  // ← Usa item.titulo (sin tilde)
+    platform: item.plataformas?.nombre || 'Sin plataforma',
+    titulo: item.titulo || 'Sin título',
     valor: item.valor || '0%',
     label: item.label || '',
     condicion: item.condicion || '',
@@ -25,4 +30,3 @@ export async function GET() {
 
   return NextResponse.json(mapped)
 }
-// Forzar redeploy Thu Aug  6 12:28:46 UTC 2026
