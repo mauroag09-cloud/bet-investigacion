@@ -16,8 +16,9 @@ export const Footer = () => {
           </div>
 
           <div>
-            <h4 className="font-fraunces text-papel font-bold mb-3">Legal</h4>
+            <h4 className="font-fraunces text-papel font-bold mb-3">Navegación</h4>
             <ul className="space-y-2 text-sm">
+              <li><Link href="/" className="hover:text-papel transition-colors">Inicio</Link></li>
               <li><Link href="/sobre-nosotros" className="hover:text-papel transition-colors">Sobre nosotros</Link></li>
               <li><Link href="/politica-privacidad" className="hover:text-papel transition-colors">Política de Privacidad</Link></li>
               <li><Link href="/condiciones-de-uso" className="hover:text-papel transition-colors">Condiciones de Uso</Link></li>
