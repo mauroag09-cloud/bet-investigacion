@@ -25,20 +25,16 @@ export const Header = () => {
         </Link>
 
         <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
-          <Link href="/plataformas" className="text-gray-400 hover:text-white transition-colors duration-300 relative group">
-            Plataformas
+          <Link href="/" className="text-gray-400 hover:text-white transition-colors duration-300 relative group">
+            Home
             <span className="absolute inset-x-0 -bottom-1 h-0.5 bg-gradient-to-r from-blue-500 via-gold-400 to-violet-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
           </Link>
-          <Link href="/ranking" className="text-gray-400 hover:text-white transition-colors duration-300 relative group">
-            Ranking
+          <Link href="/sobre-nosotros" className="text-gray-400 hover:text-white transition-colors duration-300 relative group">
+            Quiénes somos
             <span className="absolute inset-x-0 -bottom-1 h-0.5 bg-gradient-to-r from-blue-500 via-gold-400 to-violet-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
           </Link>
-          <Link href="/noticias" className="text-gray-400 hover:text-white transition-colors duration-300 relative group">
-            Noticias
-            <span className="absolute inset-x-0 -bottom-1 h-0.5 bg-gradient-to-r from-blue-500 via-gold-400 to-violet-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
-          </Link>
-          <Link href="/reclamos" className="text-gray-400 hover:text-white transition-colors duration-300 relative group">
-            Reclamos
+          <Link href="/juego-responsable" className="text-gray-400 hover:text-white transition-colors duration-300 relative group">
+            Juego Responsable
             <span className="absolute inset-x-0 -bottom-1 h-0.5 bg-gradient-to-r from-blue-500 via-gold-400 to-violet-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
           </Link>
         </nav>
