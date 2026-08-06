@@ -13,7 +13,7 @@ type Platform = {
   rating?: number;
   resumen?: string;
   logo_url?: string;
-  link_fuente?: string;
+  'link-fuente'?: string;
 };
 
 export const PlatformList = () => {
@@ -87,67 +87,75 @@ export const PlatformList = () => {
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {platforms.map((platform) => (
-            <div
-              key={platform.id}
-              className="bg-papel-light border border-oro/20 rounded-lg p-6 relative hover:shadow-lg transition-all hover:-translate-y-1"
-            >
-              <div className="absolute top-4 right-4">
-                <Stamp
-                  variant={
-                    platform.estado === 'verificada'
-                      ? 'verified'
-                      : platform.estado === 'revision'
-                      ? 'warning'
-                      : 'danger'
-                  }
-                  size="sm"
-                  rotation={-6}
-                >
-                  <span className="text-[8px] font-ibm-mono tracking-wider">
-                    {platform.estado === 'verificada'
-                      ? 'VERIFICADO'
-                      : platform.estado === 'revision'
-                      ? 'EN REVISIÓN'
-                      : 'NO RECOMENDADA'}
-                  </span>
-                </Stamp>
+          {platforms.map((platform) => {
+            const linkFuente = platform['link-fuente'];
+            // Determinar si es externo: si empieza con http:// o https://
+            const isExternal = linkFuente && (linkFuente.startsWith('http://') || linkFuente.startsWith('https://'));
+
+            return (
+              <div
+                key={platform.id}
+                className="bg-papel-light border border-oro/20 rounded-lg p-6 relative hover:shadow-lg transition-all hover:-translate-y-1"
+              >
+                <div className="absolute top-4 right-4">
+                  <Stamp
+                    variant={
+                      platform.estado === 'verificada'
+                        ? 'verified'
+                        : platform.estado === 'revision'
+                        ? 'warning'
+                        : 'danger'
+                    }
+                    size="sm"
+                    rotation={-6}
+                  >
+                    <span className="text-[8px] font-ibm-mono tracking-wider">
+                      {platform.estado === 'verificada'
+                        ? 'VERIFICADO'
+                        : platform.estado === 'revision'
+                        ? 'EN REVISIÓN'
+                        : 'NO RECOMENDADA'}
+                    </span>
+                  </Stamp>
+                </div>
+
+                <h3 className="font-fraunces text-xl font-bold text-tinta pr-16">
+                  {platform.nombre}
+                </h3>
+
+                <div className="mt-2 font-ibm-mono text-3xl font-bold text-tinta">
+                  {platform.rating || '—'}
+                  <span className="text-sm font-inter font-normal text-tinta/50">/10</span>
+                </div>
+
+                {platform.resumen && (
+                  <p className="mt-3 text-sm font-inter text-tinta/70 line-clamp-2">
+                    {platform.resumen}
+                  </p>
+                )}
+
+                {isExternal ? (
+                  /* Enlace externo: uso <a> con target="_blank" y rel="noopener noreferrer" */
+                  <a
+                    href={linkFuente}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-4 inline-block text-sm font-inter font-medium text-tinta hover:text-oro transition-colors"
+                  >
+                    Ver expediente completo →
+                  </a>
+                ) : (
+                  /* Enlace interno: uso next/link */
+                  <Link
+                    href={`/plataformas/${platform.slug}`}
+                    className="mt-4 inline-block text-sm font-inter font-medium text-tinta hover:text-oro transition-colors"
+                  >
+                    Ver expediente completo →
+                  </Link>
+                )}
               </div>
-
-              <h3 className="font-fraunces text-xl font-bold text-tinta pr-16">
-                {platform.nombre}
-              </h3>
-
-              <div className="mt-2 font-ibm-mono text-3xl font-bold text-tinta">
-                {platform.rating || '—'}
-                <span className="text-sm font-inter font-normal text-tinta/50">/10</span>
-              </div>
-
-              {platform.resumen && (
-                <p className="mt-3 text-sm font-inter text-tinta/70 line-clamp-2">
-                  {platform.resumen}
-                </p>
-              )}
-
-              {platform.link_fuente ? (
-                <a
-                  href={platform.link_fuente}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-4 inline-block text-sm font-inter font-medium text-tinta hover:text-oro transition-colors"
-                >
-                  Ver expediente completo →
-                </a>
-              ) : (
-                <Link
-                  href={`/plataformas/${platform.slug}`}
-                  className="mt-4 inline-block text-sm font-inter font-medium text-tinta hover:text-oro transition-colors"
-                >
-                  Ver expediente completo →
-                </Link>
-              )}
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
