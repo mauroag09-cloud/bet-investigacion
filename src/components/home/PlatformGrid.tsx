@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Stamp } from '@/components/ui/Stamp';
-import { supabase } from '@/lib/supabase';
 
 type Platform = {
   id: string;
@@ -17,21 +17,28 @@ type Platform = {
 };
 
 export const PlatformGrid = () => {
+  const router = useRouter();
   const [platforms, setPlatforms] = useState<Platform[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchPlatforms = async () => {
     setLoading(true);
-    // Añadir timestamp para evitar caché del navegador
-    const { data, error } = await supabase
-      .from('plataformas')
-      .select('*')
-      .order('rating', { ascending: false });
-
-    if (!error && data) {
+    try {
+      const res = await fetch('/api/plataformas?_t=' + Date.now(), {
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache',
+        },
+      });
+      const data = await res.json();
       setPlatforms(data);
+      // Forzar actualización del Router para invalidar caché
+      router.refresh();
+    } catch (error) {
+      console.error('Error al cargar plataformas:', error);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   useEffect(() => {
