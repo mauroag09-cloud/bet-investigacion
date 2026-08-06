@@ -26,7 +26,7 @@ export const Newsletter = () => {
 
       if (res.ok) {
         setStatus('success');
-        setMessage('¡Gracias por suscribirte!');
+        setMessage('¡Registrado con éxito!');
         setNombre('');
         setEmail('');
       } else {
