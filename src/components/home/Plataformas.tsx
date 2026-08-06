@@ -6,7 +6,7 @@ import { Stamp } from '@/components/ui/Stamp';
 export const Plataformas = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
