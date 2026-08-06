@@ -23,11 +23,11 @@ export async function GET() {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 
-  // Mapear para que el frontend reciba los nombres correctos
-  const mapped = data?.map(item => ({
+  // Mapear correctamente accediendo al primer elemento del array plataformas
+  const mapped = data?.map((item: any) => ({
     id: item.id,
     plataforma_id: item.plataforma_id,
-    platform: item.plataformas?.nombre || 'Sin plataforma',
+    platform: item.plataformas?.[0]?.nombre || 'Sin plataforma',
     titulo: item["título"] || 'Sin título',
     valor: item.valor || '0%',
     label: item.label || '',
