@@ -18,16 +18,14 @@ export async function GET() {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 
+  // Mapeo directo sin complicaciones
   const mapped = data?.map(item => ({
     id: item.id,
     platform: item.plataformas?.nombre || 'Sin plataforma',
-    plataforma_id: item.plataforma_id,
-    titulo: item["título"],
     valor: item.valor,
     label: item.label,
     condicion: item.condicion,
     estado: item.estado,
-    created_at: item.created_at,
   })) || []
 
   return NextResponse.json(mapped)
