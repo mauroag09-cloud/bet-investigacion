@@ -1,7 +1,11 @@
 import { NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
 
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+export async function PUT(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params
   const { nombre } = await req.json()
 
   if (!nombre) {
@@ -11,7 +15,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
   const { error } = await supabase
     .from('plataformas')
     .update({ nombre })
-    .eq('id', params.id)
+    .eq('id', id)
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 })
