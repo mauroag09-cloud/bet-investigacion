@@ -1,6 +1,3 @@
-'use client';
-
-import { useState, useEffect } from 'react';
 import { Hero } from '@/components/home/Hero';
 import { ProviderCarousel } from '@/components/home/ProviderCarousel';
 import { PlatformVerifier } from '@/components/home/PlatformVerifier';
