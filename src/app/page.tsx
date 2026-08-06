@@ -10,7 +10,6 @@ import { ResponsibleGaming } from '@/components/home/ResponsibleGaming';
 import { Newsletter } from '@/components/home/Newsletter';
 
 // Esto desactiva la caché de la página completa
-export const dynamic = 'force-dynamic'
 
 export default function HomePage() {
   return (
@@ -28,3 +27,5 @@ export default function HomePage() {
     </>
   );
 }
+
+export const revalidate = 0;
