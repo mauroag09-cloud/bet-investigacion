@@ -12,6 +12,7 @@ type Promocion = {
   label: string;
   condicion: string;
   estado: string;
+  link?: string;
 };
 
 const statusColors: Record<string, string> = {
@@ -110,7 +111,6 @@ export const PromotionsList = () => {
                 >
                   <div className="absolute inset-[4px] border-2 border-dashed border-[#B08D57]/30 rounded pointer-events-none" style={{ borderRadius: '4px' }} />
 
-                  {/* Nombre de la plataforma + punto de estado */}
                   <div className="flex items-center justify-between mb-1">
                     <div className="flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
@@ -120,7 +120,6 @@ export const PromotionsList = () => {
                     </div>
                   </div>
 
-                  {/* Título (nuevo) */}
                   {promo.titulo && (
                     <div className="text-center mb-1">
                       <span className="font-inter text-sm font-medium text-tinta/80">
@@ -129,7 +128,6 @@ export const PromotionsList = () => {
                     </div>
                   )}
 
-                  {/* Valor principal */}
                   <div className="text-center py-1">
                     <span className="font-fraunces text-4xl md:text-5xl font-black text-[#14213D]">{promo.valor}</span>
                     <span className="block font-inter text-[12px] tracking-wider uppercase text-[#14213D]/50 mt-0.5">
@@ -139,16 +137,26 @@ export const PromotionsList = () => {
 
                   <div className="w-8 h-px bg-[#B08D57]/40 mx-auto my-2" />
 
-                  {/* Condición */}
                   <p className="text-center font-ibm-mono text-[11px] text-[#14213D]/60">{promo.condicion}</p>
 
-                  {/* Botón */}
-                  <button
-                    className="w-full mt-3 py-2 bg-[#14213D] text-white text-sm font-inter font-medium rounded hover:bg-[#14213D]/90 transition-colors"
-                    style={{ borderRadius: '4px' }}
-                  >
-                    Activar →
-                  </button>
+                  {promo.link ? (
+                    <a
+                      href={promo.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block w-full mt-3 py-2 bg-[#14213D] text-white text-sm font-inter font-medium rounded hover:bg-[#14213D]/90 transition-colors text-center"
+                      style={{ borderRadius: '4px' }}
+                    >
+                      Activar →
+                    </a>
+                  ) : (
+                    <button
+                      className="w-full mt-3 py-2 bg-[#14213D] text-white text-sm font-inter font-medium rounded hover:bg-[#14213D]/90 transition-colors"
+                      style={{ borderRadius: '4px' }}
+                    >
+                      Activar →
+                    </button>
+                  )}
                 </motion.div>
               );
             })}
