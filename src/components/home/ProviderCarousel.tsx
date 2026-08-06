@@ -38,7 +38,7 @@ export const ProviderCarousel = () => {
             {duplicated.map((provider, idx) => (
               <div
                 key={`${provider.name}-${idx}`}
-                className="flex-shrink-0 opacity-30 hover:opacity-70 transition-opacity"
+                className="flex-shrink-0"
               >
                 <Image
                   src={provider.logo}
