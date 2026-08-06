@@ -4,8 +4,7 @@ import { useEffect, useState } from 'react'
 
 type Promocion = {
   id: string
-  platform: string
-  plataforma_id: string
+  nombre_plataforma: string
   titulo: string
   valor: string
   label: string
@@ -16,6 +15,8 @@ type Promocion = {
 export default function AdminPromociones() {
   const [promociones, setPromociones] = useState<Promocion[]>([])
   const [loading, setLoading] = useState(true)
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [editName, setEditName] = useState('')
 
   const [form, setForm] = useState({
     nombre_plataforma: '',
@@ -61,10 +62,29 @@ export default function AdminPromociones() {
     }
   }
 
+  const startEditing = (id: string, currentName: string) => {
+    setEditingId(id)
+    setEditName(currentName)
+  }
+
+  const saveName = async (id: string) => {
+    if (!editName.trim()) return
+    const res = await fetch(`/api/promociones/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nombre_plataforma: editName.trim() }),
+    })
+    if (res.ok) {
+      setEditingId(null)
+      setEditName('')
+      fetchPromociones()
+    }
+  }
+
   if (loading) return <div className="p-8 text-center">Cargando...</div>
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="max-w-5xl mx-auto p-6">
       <h1 className="text-3xl font-fraunces text-tinta mb-6">Gestionar Promociones</h1>
 
       <form onSubmit={handleSubmit} className="bg-papel border border-oro/30 rounded-lg p-6 mb-8">
@@ -115,18 +135,73 @@ export default function AdminPromociones() {
         </button>
       </form>
 
-      <div className="grid gap-4">
-        {promociones.map(p => (
-          <div key={p.id} className="bg-papel border border-oro/20 rounded-lg p-4 flex justify-between items-center">
-            <div>
-              <strong>{p.platform || 'Sin plataforma'}</strong> - {p.titulo} ({p.valor} {p.label})
-              <div className="text-sm text-tinta/60">{p.condicion} · Estado: {p.estado}</div>
-            </div>
-            <button onClick={() => handleDelete(p.id)} className="text-red-600 hover:text-red-800">
-              Eliminar
-            </button>
-          </div>
-        ))}
+      <div className="bg-white rounded-lg shadow overflow-hidden">
+        <table className="w-full text-sm">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="text-left p-3">Plataforma</th>
+              <th className="text-left p-3">Título</th>
+              <th className="text-left p-3">Valor</th>
+              <th className="text-left p-3">Label</th>
+              <th className="text-left p-3">Condición</th>
+              <th className="text-left p-3">Estado</th>
+              <th className="text-left p-3">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {promociones.map(p => (
+              <tr key={p.id} className="border-t">
+                <td className="p-3">
+                  {editingId === p.id ? (
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={editName}
+                        onChange={(e) => setEditName(e.target.value)}
+                        className="border p-1 rounded text-sm"
+                      />
+                      <button
+                        onClick={() => saveName(p.id)}
+                        className="text-green-600 hover:text-green-800 text-xs"
+                      >
+                        Guardar
+                      </button>
+                      <button
+                        onClick={() => { setEditingId(null); setEditName('') }}
+                        className="text-gray-500 hover:text-gray-700 text-xs"
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  ) : (
+                    <span className="font-medium">
+                      {p.nombre_plataforma || 'Sin nombre'}
+                      <button
+                        onClick={() => startEditing(p.id, p.nombre_plataforma || '')}
+                        className="ml-2 text-blue-600 hover:text-blue-800 text-xs"
+                      >
+                        ✎
+                      </button>
+                    </span>
+                  )}
+                </td>
+                <td className="p-3">{p.titulo}</td>
+                <td className="p-3">{p.valor}</td>
+                <td className="p-3">{p.label}</td>
+                <td className="p-3">{p.condicion}</td>
+                <td className="p-3">{p.estado}</td>
+                <td className="p-3">
+                  <button
+                    onClick={() => handleDelete(p.id)}
+                    className="text-red-600 hover:text-red-800 text-xs"
+                  >
+                    Eliminar
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   )
