@@ -177,6 +177,26 @@ export const ClaimsSection = () => {
           </p>
         </div>
 
+        {/* Box de denuncia — mismo sector que el encabezado */}
+        <div className="mt-8 max-w-3xl mx-auto bg-[#FAF7F0] border border-[#B08D57]/40 rounded-xl p-8 text-center shadow-sm">
+          <h3 className="font-fraunces text-2xl font-bold text-[#14213D]">
+            Dejá tu denuncia
+          </h3>
+          <p className="mt-2 font-inter text-sm text-[#14213D]/60 max-w-md mx-auto">
+            ¿Tuviste un problema con una plataforma? Contanos tu experiencia para ayudar a
+            otros jugadores a evitar estafas.
+          </p>
+          <button
+            onClick={openModal}
+            className="mt-5 px-8 py-3 bg-[#9B2226] text-white font-inter font-medium rounded hover:bg-[#9B2226]/90 hover:shadow-md transition-all"
+          >
+            Denunciar una estafa →
+          </button>
+          <p className="mt-3 text-xs font-inter text-[#14213D]/40">
+            Tu denuncia será revisada por nuestro equipo. Mantenemos el anonimato si así lo solicitás.
+          </p>
+        </div>
+
         {loading ? (
           <div className="mt-10 text-center text-gray-500 font-inter text-sm">
             Cargando reclamos...
@@ -258,25 +278,6 @@ export const ClaimsSection = () => {
           </div>
         )}
 
-        {/* Box de denuncia */}
-        <div className="mt-12 max-w-3xl mx-auto bg-[#FAF7F0] border border-[#B08D57]/40 rounded-xl p-8 text-center shadow-sm">
-          <h3 className="font-fraunces text-2xl font-bold text-[#14213D]">
-            Dejá tu denuncia
-          </h3>
-          <p className="mt-2 font-inter text-sm text-[#14213D]/60 max-w-md mx-auto">
-            ¿Tuviste un problema con una plataforma? Contanos tu experiencia para ayudar a
-            otros jugadores a evitar estafas.
-          </p>
-          <button
-            onClick={openModal}
-            className="mt-5 px-8 py-3 bg-[#9B2226] text-white font-inter font-medium rounded hover:bg-[#9B2226]/90 hover:shadow-md transition-all"
-          >
-            Denunciar una estafa →
-          </button>
-          <p className="mt-3 text-xs font-inter text-[#14213D]/40">
-            Tu denuncia será revisada por nuestro equipo. Mantenemos el anonimato si así lo solicitás.
-          </p>
-        </div>
       </div>
 
       {/* ===== MODAL DE DENUNCIA ===== */}
