@@ -35,7 +35,7 @@ export default async function PlatformListFinal() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {platforms.map((platform) => {
             // Usar notación de corchetes para acceder a la propiedad con guión
-            const link = platform['link-fuente'];
+            const link = platform['enlace'] || platform['link-fuente'];
 
             return (
               <div

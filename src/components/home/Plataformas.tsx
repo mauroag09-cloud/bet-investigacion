@@ -45,8 +45,8 @@ export const Plataformas = () => {
               <h3 className="font-fraunces text-xl font-bold text-tinta pr-16">{p.nombre}</h3>
               <div className="mt-2 font-ibm-mono text-3xl font-bold text-tinta">{p.rating || '—'}<span className="text-sm font-inter font-normal text-tinta/50">/10</span></div>
               {p.resumen && <p className="mt-3 text-sm font-inter text-tinta/70 line-clamp-2">{p.resumen}</p>}
-              {p['link-fuente'] ? (
-                <a href={p['link-fuente']} target="_blank" rel="noopener noreferrer" className="mt-4 inline-block text-sm font-inter font-medium text-blue-600 hover:underline">Ver expediente completo →</a>
+              {(p['enlace'] || p['link-fuente']) ? (
+                <a href={p['enlace'] || p['link-fuente']} target="_blank" rel="noopener noreferrer" className="mt-4 inline-block text-sm font-inter font-medium text-blue-600 hover:underline">Ver expediente completo →</a>
               ) : (
                 <span className="mt-4 inline-block text-sm text-gray-400">Sin expediente</span>
               )}

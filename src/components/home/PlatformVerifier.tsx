@@ -102,7 +102,11 @@ export const PlatformVerifier = () => {
                     {p.licencia && <span className="ml-3 text-sm text-tinta/50">Licencia: {p.licencia}</span>}
                     {p.rating && <span className="ml-3 text-sm font-ibm-mono text-tinta/70">{p.rating}/10</span>}
                   </div>
-                  <button className="px-4 py-1.5 bg-[#14213D] text-white text-sm font-inter rounded hover:bg-[#14213D]/90 transition-colors">Ver expediente</button>
+                  {p.enlace || p['link-fuente'] ? (
+                    <a href={p.enlace || p['link-fuente']} target="_blank" rel="noopener noreferrer" className="px-4 py-1.5 bg-[#14213D] text-white text-sm font-inter rounded hover:bg-[#14213D]/90 transition-colors">Ver expediente</a>
+                  ) : (
+                    <span className="text-sm text-gray-400">Sin expediente</span>
+                  )}
                 </div>
               ))}
             </div>

@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 import { Stamp } from '@/components/ui/Stamp';
 
 type Platform = {
@@ -13,7 +12,8 @@ type Platform = {
   rating?: number;
   resumen?: string;
   logo_url?: string;
-  link_fuente?: string;
+  enlace?: string;
+  'link-fuente'?: string;
 };
 
 export const PlatformsGrid = () => {
@@ -87,7 +87,9 @@ export const PlatformsGrid = () => {
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {platforms.map((platform) => (
+          {platforms.map((platform) => {
+            const link = platform.enlace || platform['link-fuente'];
+            return (
             <div
               key={platform.id}
               className="bg-papel-light border border-oro/20 rounded-lg p-6 relative hover:shadow-lg transition-all hover:-translate-y-1"
@@ -129,9 +131,9 @@ export const PlatformsGrid = () => {
                 </p>
               )}
 
-              {platform.link_fuente ? (
+              {link ? (
                 <a
-                  href={platform.link_fuente}
+                  href={link}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="mt-4 inline-block text-sm font-inter font-medium text-tinta hover:text-oro transition-colors"
@@ -139,15 +141,11 @@ export const PlatformsGrid = () => {
                   Ver expediente completo →
                 </a>
               ) : (
-                <Link
-                  href={`/plataformas/${platform.slug}`}
-                  className="mt-4 inline-block text-sm font-inter font-medium text-tinta hover:text-oro transition-colors"
-                >
-                  Ver expediente completo →
-                </Link>
+                <span className="mt-4 inline-block text-sm text-gray-400">Sin expediente</span>
               )}
             </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>

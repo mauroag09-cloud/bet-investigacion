@@ -13,6 +13,7 @@ type Platform = {
   resumen?: string;
   logo_url?: string;
   'link-fuente'?: string;
+  enlace?: string;
 };
 
 export const PlatformListNew = () => {
@@ -51,7 +52,7 @@ export const PlatformListNew = () => {
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {platforms.map((platform) => {
-            const link = platform['link-fuente'];
+            const link = platform['enlace'] || platform['link-fuente'];
             const hasValidLink = link && (link.startsWith('http://') || link.startsWith('https://'));
 
             return (

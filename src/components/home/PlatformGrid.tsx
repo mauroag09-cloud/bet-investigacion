@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Stamp } from '@/components/ui/Stamp';
 
@@ -14,6 +13,8 @@ type Platform = {
   rating?: number;
   resumen?: string;
   logo_url?: string;
+  enlace?: string;
+  'link-fuente'?: string;
 };
 
 export const PlatformGrid = () => {
@@ -116,12 +117,18 @@ export const PlatformGrid = () => {
                 </p>
               )}
 
-              <Link
-                href={`/plataformas/${platform.slug}`}
-                className="mt-4 inline-block text-sm font-inter font-medium text-tinta hover:text-oro transition-colors"
-              >
-                Ver expediente completo →
-              </Link>
+              {platform.enlace || platform['link-fuente'] ? (
+                <a
+                  href={platform.enlace || platform['link-fuente']}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-4 inline-block text-sm font-inter font-medium text-tinta hover:text-oro transition-colors"
+                >
+                  Ver expediente completo →
+                </a>
+              ) : (
+                <span className="mt-4 inline-block text-sm text-gray-400">Sin expediente</span>
+              )}
             </div>
           ))}
         </div>

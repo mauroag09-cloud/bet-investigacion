@@ -24,7 +24,7 @@ export const PlatformGridFinal = () => {
         <h2 className="font-fraunces text-3xl md:text-4xl text-tinta font-bold mb-4">Índice de plataformas analizadas</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {platforms.map((p: any) => {
-            const link = p['link-fuente'];
+            const link = p['enlace'] || p['link-fuente'];
             return (
               <div key={p.id} className="bg-papel-light border border-oro/20 rounded-lg p-6 relative hover:shadow-lg transition-all hover:-translate-y-1">
                 <div className="absolute top-4 right-4">
