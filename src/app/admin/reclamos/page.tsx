@@ -270,9 +270,9 @@ export default function AdminReclamos() {
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="font-semibold">{r.titulo}</span>
                     <span className="text-xs text-gray-400">{r.nombre_plataforma}</span>
-                    {r.origen === 'ia' && (
+                    {r.origen && r.origen !== 'usuario' && (
                       <span className="text-[10px] font-ibm-mono px-1.5 py-0.5 rounded bg-purple-900/50 text-purple-300">
-                        🤖 IA
+                        {r.origen === 'ia' ? '🤖 IA' : '📰 Auto'}
                       </span>
                     )}
                   </div>
