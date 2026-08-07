@@ -32,17 +32,26 @@ const FEEDS = [
   `https://news.google.com/rss/search?q=casino%20online%20bono%20promocion%20fraudulenta&${AR}`,
   `https://news.google.com/rss/search?q=estafa%20apuestas%20online%20argentina&${AR}`,
   `https://news.google.com/rss/search?q=casas%20de%20apuestas%20ilegales%20argentina&${AR}`,
+  // Ampliación: fraudes con casas de apuestas (siempre Argentina)
+  `https://news.google.com/rss/search?q=fraude%20casa%20de%20apuestas%20argentina&${AR}`,
+  `https://news.google.com/rss/search?q=estafa%20casino%20apuestas%20juegos%20argentina&${AR}`,
+  `https://news.google.com/rss/search?q=apuestas%20online%20fraude%20banca%20dinero%20argentina&${AR}`,
+  `https://news.google.com/rss/search?q=casa%20de%20apuestas%20fraude%20jugadores%20argentina&${AR}`,
+  `https://news.google.com/rss/search?q=apuestas%20ilegales%20fraude%20argentina&${AR}`,
 ];
 
 // ---------- Palabras clave ----------
 // Foco del usuario: reclamos, denuncias, falta de pago, promos fraudulentas
 const KW_RECLAMO = [
-  'reclamo', 'denuncia', 'denunci', 'estafa', 'fraude', 'falta de pago',
-  'no paga', 'impago', 'retiro', 'bloqueo', 'bloqueada', 'bloqueado',
-  'demora', 'reembolso', 'devolucion', 'devolución', 'bono no acreditado',
-  'no acredit', 'premio', 'promocion fraudulenta', 'promoción fraudulenta',
-  'publicidad enganosa', 'publicidad engañosa', 'victima', 'queja', 'cobrar',
-  'cuenta', 'clausur', 'ilegal', 'pirata', 'clandestin', 'sin licencia',
+  'reclamo', 'denuncia', 'denunci', 'estafa', 'estaf', 'fraude', 'fraudulent',
+  'falta de pago', 'no paga', 'impago', 'retiro', 'bloqueo', 'bloqueada',
+  'bloqueado', 'demora', 'reembolso', 'devolucion', 'devolución',
+  'bono no acreditado', 'no acredit', 'premio', 'promocion fraudulenta',
+  'promoción fraudulenta', 'publicidad enganosa', 'publicidad engañosa',
+  'victima', 'queja', 'cobrar', 'cuenta', 'clausur', 'ilegal', 'pirata',
+  'clandestin', 'sin licencia', 'robo', 'timadores', 'timador', 'defraudac',
+  'estafador', 'engano', 'engaño', 'phishing', 'suplantac', 'no me paga',
+  'no pago', 'deja de pagar', 'sin pagar', 'incumple', 'usurp', 'apropi',
 ];
 const KW_SECTOR = [
   'casino', 'apuesta', 'tragamoneda', 'slots', 'igaming', 'iGaming', 'ruleta',

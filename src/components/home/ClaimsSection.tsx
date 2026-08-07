@@ -258,10 +258,18 @@ export const ClaimsSection = () => {
           </div>
         )}
 
-        <div className="mt-10 text-center">
+        {/* Box de denuncia */}
+        <div className="mt-12 max-w-3xl mx-auto bg-[#FAF7F0] border border-[#B08D57]/40 rounded-xl p-8 text-center shadow-sm">
+          <h3 className="font-fraunces text-2xl font-bold text-[#14213D]">
+            Dejá tu denuncia
+          </h3>
+          <p className="mt-2 font-inter text-sm text-[#14213D]/60 max-w-md mx-auto">
+            ¿Tuviste un problema con una plataforma? Contanos tu experiencia para ayudar a
+            otros jugadores a evitar estafas.
+          </p>
           <button
             onClick={openModal}
-            className="px-8 py-3 bg-[#9B2226] text-white font-inter font-medium rounded hover:bg-[#9B2226]/90 transition-colors"
+            className="mt-5 px-8 py-3 bg-[#9B2226] text-white font-inter font-medium rounded hover:bg-[#9B2226]/90 hover:shadow-md transition-all"
           >
             Denunciar una estafa →
           </button>
