@@ -139,6 +139,8 @@ export const ClaimsSection = () => {
           nombre_usuario: form.nombre.trim(),
           email: form.email.trim(),
           pruebas,
+          // Ocultas por defecto: el equipo las aprueba desde el panel admin
+          visible: false,
         }),
       });
       if (!res.ok) {

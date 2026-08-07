@@ -334,7 +334,7 @@ export default function AdminReclamos() {
                     }`}
                     title={r.visible === false ? 'Activarlo para que se vea en la web' : 'Ocultarlo de la web (sin borrar)'}
                   >
-                    {r.visible === false ? 'Activar' : 'Visible'}
+                    {r.visible === false ? 'Activar' : 'Ocultar'}
                   </button>
                   <select
                     value={r.estado}
