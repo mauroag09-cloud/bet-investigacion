@@ -1,11 +1,9 @@
 // ============================================================
 // actualizar-reclamos.mjs  (costo cero)
-// Busca noticias/reclamos de casas de apuestas destacados usando
-// feeds RSS GRATUITOS (Google Noticias + Yogonet) y los guarda
+// Busca reclamos/estafas de casas de apuestas destacados usando
+// feeds RSS GRATUITOS (Google Noticias + Yogonet), filtra por
+// relevancia (prioriza reclamos reales de jugadores) y los guarda
 // en la tabla reclamos de Supabase con origen='rss', estado='pending'.
-//
-// Si existe PERPLEXITY_API_KEY, usa Perplexity Sonar en su lugar
-// (opcional). Sin key, funciona igual con RSS → costo $0.
 //
 // Uso:
 //   node scripts/actualizar-reclamos.mjs
@@ -17,6 +15,7 @@ const SUPABASE_KEY = process.env.SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6Ik
 const PERPLEXITY_API_KEY = process.env.PERPLEXITY_API_KEY;
 const DEMO = process.env.DEMO === '1';
 const MAX_RESULTADOS = 6;
+const MAX_DIAS_ANTIGUEDAD = 3; // solo noticias de las últimas 72 hs
 
 const headers = {
   apikey: SUPABASE_KEY,
@@ -33,12 +32,25 @@ const FEEDS = [
   'https://www.yogonet.com/latinoamerica/rss',
 ];
 
-// Palabras que hacen relevante una noticia (debe tener 1 de "sector" + 1 de "problema")
-const KW_SECTOR = ['casino', 'apuesta', 'juego', 'tragamoneda', 'bet', 'sport', 'iGaming', 'igaming', 'slots'];
-const KW_PROBLEMA = [
-  'estafa', 'denuncia', 'fraude', 'retiro', 'bloqueo', 'bloqueado', 'ilegal', 'licencia',
-  'reclamo', 'problema', 'demanda', 'investigaci', 'sanción', 'sancion', 'multa', 'alerta',
-  'queja', 'deuda', 'pirata', 'clandestin',
+// ---------- Palabras clave ----------
+// Indica un reclamo real de jugador (peso 2)
+const KW_RECLAMO = [
+  'estafa', 'denuncia', 'fraude', 'reclamo', 'retiro', 'bloqueo', 'bloqueada',
+  'bloqueado', 'queja', 'victima', 'usuario', 'jugador', 'apostador', 'cuenta',
+  'cobrar', 'pago', 'demanda', 'investigaci', 'clausur', 'ilegal', 'pirata',
+  'clandestin', 'sin licencia', 'no paga', 'impago',
+];
+// Indica que es del sector apuestas/casinos (peso 1)
+const KW_SECTOR = [
+  'casino', 'apuesta', 'tragamoneda', 'slots', 'igaming', 'iGaming', 'bet',
+  'ruleta', 'poker', 'poquer', 'juego online', 'juegos online', 'plataforma de juego',
+];
+// Cualquier coincidencia descarta la noticia (ruido)
+const KW_NEGATIVA = [
+  'españa', 'espan', 'mejores casas', 'sin restricc', 'top 10', 'ranking',
+  'bonus', 'promoci', 'oferta', 'registro gratis', 'gratuito', 'app nueva',
+  'torneo', 'premio de', 'sorteo', 'mundial', 'eurocopa', 'copa américa',
+  'futbol', 'fútbol', 'cuota', 'pronostico', 'prediccion', 'winning', 'jackpot',
 ];
 
 // ---------- Utilidades ----------
@@ -67,22 +79,33 @@ function parsearRSS(xml) {
             .trim()
         : '';
     };
-    const pubDate = get('pubDate');
-    const fecha = pubDate ? pubDate.slice(0, 16) : '';
-    items.push({ title: get('title'), link: get('link'), description: get('description'), fecha });
+    items.push({
+      title: get('title'),
+      link: get('link'),
+      description: get('description'),
+      fecha: get('pubDate'),
+    });
   }
   return items;
 }
 
-function esRelevante(item) {
+// Puntaje de relevancia: exige sector + reclamo, descarta negativas
+function calcularScore(item) {
   const texto = normalizar(`${item.title} ${item.description}`);
-  const sector = KW_SECTOR.some((k) => texto.includes(k));
-  const problema = KW_PROBLEMA.some((k) => texto.includes(k));
-  return sector && problema;
+  if (KW_NEGATIVA.some((k) => texto.includes(k))) return 0;
+  const sector = KW_SECTOR.filter((k) => texto.includes(k)).length;
+  const reclamo = KW_RECLAMO.filter((k) => texto.includes(k)).length;
+  if (sector === 0 || reclamo === 0) return 0;
+  return Math.min(2 * reclamo + sector, 10);
+}
+
+function esReciente(fechaRSS) {
+  const d = new Date(fechaRSS);
+  if (isNaN(d.getTime())) return true; // si no se puede parsear, no descartar
+  return (Date.now() - d.getTime()) / 86400000 <= MAX_DIAS_ANTIGUEDAD;
 }
 
 function aISO(fechaRSS) {
-  // Convierte "Wed, 06 Aug 2026 14:30:00 GMT" a "2026-08-06"
   const d = new Date(fechaRSS);
   return isNaN(d.getTime()) ? new Date().toISOString().slice(0, 10) : d.toISOString().slice(0, 10);
 }
@@ -95,7 +118,10 @@ async function obtenerDeRSS() {
       const res = await fetch(feed, { redirect: 'follow' });
       if (!res.ok) continue;
       const xml = await res.text();
-      const items = parsearRSS(xml).filter(esRelevante);
+      const items = parsearRSS(xml)
+        .filter(esReciente)
+        .map((it) => ({ ...it, score: calcularScore(it) }))
+        .filter((it) => it.score > 0);
       resultados.push(...items);
       console.log(`✓ ${feed.split('/')[2]} → ${items.length} relevante(s)`);
     } catch (e) {
@@ -103,14 +129,21 @@ async function obtenerDeRSS() {
     }
   }
 
-  // Dedupe por link entre feeds y ordenar por fecha
+  // Dedupe por URL y por título normalizado (mismo artículo con links distintos)
   const unicos = new Map();
   for (const it of resultados) {
-    if (!it.link || unicos.has(it.link)) continue;
-    unicos.set(it.link, it);
+    const clave = it.link || normalizar(it.title).slice(0, 60);
+    if (unicos.has(clave)) continue;
+    // ¿Ya vimos un título muy parecido?
+    const yaVisto = [...unicos.values()].some(
+      (u) => normalizar(u.title).slice(0, 50) === normalizar(it.title).slice(0, 50)
+    );
+    if (yaVisto) continue;
+    unicos.set(clave, it);
   }
+
   return [...unicos.values()]
-    .sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
+    .sort((a, b) => b.score - a.score || new Date(b.fecha) - new Date(a.fecha))
     .slice(0, MAX_RESULTADOS)
     .map((it) => ({
       plataforma: 'Noticias de apuestas',
@@ -118,6 +151,7 @@ async function obtenerDeRSS() {
       descripcion: it.description.slice(0, 300) || it.title,
       url: it.link,
       fecha: aISO(it.fecha),
+      score: it.score,
     }));
 }
 
@@ -145,19 +179,22 @@ async function obtenerDePerplexity() {
 
 // ---------- 2) Guardar en Supabase ----------
 async function guardarEnSupabase(items) {
+  // Traer una sola vez lo ya guardado (para dedupe por URL y título)
+  const ya = await fetch(`${SUPABASE_URL}/rest/v1/reclamos?select=enlace,titulo&limit=200`, { headers });
+  const existentes = await ya.json();
+  const enlacesPrevios = new Set(Array.isArray(existentes) ? existentes.map((r) => r.enlace) : []);
+  const titulosPrevios = Array.isArray(existentes) ? existentes.map((r) => normalizar(r.titulo).slice(0, 50)) : [];
+
   let insertados = 0;
   let duplicados = 0;
   for (const item of items) {
-    if (item.url) {
-      const check = await fetch(
-        `${SUPABASE_URL}/rest/v1/reclamos?select=id&enlace=eq.${encodeURIComponent(item.url)}&limit=1`,
-        { headers }
-      );
-      const existentes = await check.json();
-      if (Array.isArray(existentes) && existentes.length > 0) {
-        duplicados++;
-        continue;
-      }
+    const tituloNorm = normalizar(item.titulo).slice(0, 50);
+    if (
+      enlacesPrevios.has(item.url) ||
+      titulosPrevios.some((t) => t === tituloNorm)
+    ) {
+      duplicados++;
+      continue;
     }
     const body = {
       nombre_plataforma: item.plataforma || 'Noticias de apuestas',
@@ -167,7 +204,7 @@ async function guardarEnSupabase(items) {
       fecha: item.fecha || new Date().toISOString().slice(0, 10),
       enlace: item.url || null,
       pruebas: [],
-      origen: PERPLEXITY_API_KEY ? 'ia' : 'rss',
+      origen: 'rss',
     };
     const res = await fetch(`${SUPABASE_URL}/rest/v1/reclamos`, {
       method: 'POST',
@@ -176,7 +213,7 @@ async function guardarEnSupabase(items) {
     });
     if (res.status === 201 || res.status === 200) {
       insertados++;
-      console.log(`✓ ${body.titulo.slice(0, 70)}`);
+      console.log(`✓ [score ${item.score}] ${body.titulo.slice(0, 70)}`);
     } else {
       console.error(`✗ Error: ${await res.text()}`);
     }
@@ -189,8 +226,8 @@ try {
   let items;
   if (DEMO) {
     items = [
-      { plataforma: 'Casino Demo AR', titulo: 'Denuncian demoras de más de 30 días en retiros', descripcion: 'Varios usuarios reportan retiros "en proceso" desde hace un mes.', url: 'https://ejemplo.com/demo-1', fecha: new Date().toISOString().slice(0, 10) },
-      { plataforma: 'Apuestas Test', titulo: 'Bono de bienvenida no acreditado', descripcion: 'El bono prometido no se acreditó tras el primer depósito.', url: 'https://ejemplo.com/demo-2', fecha: new Date().toISOString().slice(0, 10) },
+      { plataforma: 'Casino Demo AR', titulo: 'Denuncian demoras de más de 30 días en retiros', descripcion: 'Varios usuarios reportan retiros "en proceso" desde hace un mes.', url: 'https://ejemplo.com/demo-1', fecha: new Date().toISOString().slice(0, 10), score: 8 },
+      { plataforma: 'Apuestas Test', titulo: 'Bono de bienvenida no acreditado', descripcion: 'El bono prometido no se acreditó tras el primer depósito.', url: 'https://ejemplo.com/demo-2', fecha: new Date().toISOString().slice(0, 10), score: 6 },
     ];
     console.log('→ Modo DEMO');
   } else if (PERPLEXITY_API_KEY) {
