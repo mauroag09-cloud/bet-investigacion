@@ -1,17 +1,41 @@
 import { NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
 
+export const revalidate = 0
+
+export async function GET() {
+  const { data, error } = await supabase
+    .from('reclamos')
+    .select('*')
+    .order('fecha', { ascending: false })
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 })
+  }
+
+  return NextResponse.json(data || [], {
+    headers: {
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0',
+    },
+  })
+}
+
 export async function POST(req: Request) {
   const body = await req.json()
 
   const { error } = await supabase
     .from('reclamos')
     .insert({
-      plataforma_id: body.plataforma_id,
-      nombre_usuario: body.nombre_usuario,
-      email: body.email,
-      descripcion: body.descripcion,
-      estado: 'pendiente'
+      nombre_plataforma: body.nombre_plataforma || '',
+      titulo: body.titulo || '',
+      descripcion: body.descripcion || '',
+      estado: body.estado || 'pending',
+      fecha: body.fecha || new Date().toISOString().slice(0, 10),
+      enlace: body.enlace || null,
+      nombre_usuario: body.nombre_usuario || null,
+      email: body.email || null,
     })
 
   if (error) {
