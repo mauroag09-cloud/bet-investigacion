@@ -10,6 +10,7 @@ type Reclamo = {
   estado: 'pending' | 'reviewing' | 'resolved'
   fecha: string
   enlace?: string | null
+  pruebas?: { nombre: string; url: string; tipo: string }[] | null
 }
 
 const ESTADOS: Record<string, string> = {
@@ -275,7 +276,25 @@ export default function AdminReclamos() {
                   <p className="text-xs text-gray-500 mt-1 font-ibm-mono">
                     {r.fecha ? r.fecha.slice(0, 10) : '—'}
                     {r.enlace ? ' · con enlace' : ''}
+                    {r.pruebas && r.pruebas.length > 0
+                      ? ' · ' + r.pruebas.length + ' adjunto(s)'
+                      : ''}
                   </p>
+                  {r.pruebas && r.pruebas.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {r.pruebas.map((pr, i) => (
+                        <a
+                          key={i}
+                          href={pr.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs text-amber-400 hover:text-amber-300 underline underline-offset-2"
+                        >
+                          📎 {pr.nombre}
+                        </a>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex items-center gap-2">
