@@ -1,0 +1,26 @@
+name: Actualizar reclamos con IA (Perplexity)
+
+on:
+  schedule:
+    # Todos los días a las 09:00 UTC (06:00 Argentina)
+    - cron: '0 9 * * *'
+  workflow_dispatch: {} # Permite ejecutarlo manualmente desde GitHub
+
+jobs:
+  actualizar-reclamos:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Ejecutar actualización de reclamos
+        run: node scripts/actualizar-reclamos.mjs
+        env:
+          PERPLEXITY_API_KEY: ${{ secrets.PERPLEXITY_API_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}

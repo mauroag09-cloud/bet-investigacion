@@ -11,6 +11,7 @@ type Reclamo = {
   fecha: string
   enlace?: string | null
   pruebas?: { nombre: string; url: string; tipo: string }[] | null
+  origen?: string
 }
 
 const ESTADOS: Record<string, string> = {
@@ -269,6 +270,11 @@ export default function AdminReclamos() {
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="font-semibold">{r.titulo}</span>
                     <span className="text-xs text-gray-400">{r.nombre_plataforma}</span>
+                    {r.origen === 'ia' && (
+                      <span className="text-[10px] font-ibm-mono px-1.5 py-0.5 rounded bg-purple-900/50 text-purple-300">
+                        🤖 IA
+                      </span>
+                    )}
                   </div>
                   {r.descripcion && (
                     <p className="text-sm text-gray-400 line-clamp-2 mt-1">{r.descripcion}</p>
