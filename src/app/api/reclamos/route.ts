@@ -3,11 +3,16 @@ import { supabase } from '@/lib/supabase'
 
 export const revalidate = 0
 
-export async function GET() {
-  const { data, error } = await supabase
-    .from('reclamos')
-    .select('*')
-    .order('fecha', { ascending: false })
+export async function GET(request: Request) {
+  // ?todas=1 → devuelve todos (para el panel admin). Por defecto solo los visibles.
+  const url = new URL(request.url)
+  const todas = url.searchParams.get('todas') === '1'
+
+  let query = supabase.from('reclamos').select('*')
+  if (!todas) {
+    query = query.eq('visible', true)
+  }
+  const { data, error } = await query.order('fecha', { ascending: false })
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 })
@@ -41,6 +46,7 @@ export async function POST(req: Request) {
       nombre_usuario: body.nombre_usuario || null,
       email: body.email || null,
       pruebas: Array.isArray(body.pruebas) ? body.pruebas : [],
+      visible: body.visible !== undefined ? body.visible : true,
     })
 
   if (error) {

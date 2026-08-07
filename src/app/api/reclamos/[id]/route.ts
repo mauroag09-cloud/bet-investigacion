@@ -18,6 +18,7 @@ export async function PUT(
   if (body.nombre_usuario !== undefined) updateData.nombre_usuario = body.nombre_usuario
   if (body.email !== undefined) updateData.email = body.email
   if (body.pruebas !== undefined) updateData.pruebas = body.pruebas
+  if (body.visible !== undefined) updateData.visible = body.visible
 
   if (Object.keys(updateData).length === 0) {
     return NextResponse.json({ error: 'No hay datos para actualizar' }, { status: 400 })

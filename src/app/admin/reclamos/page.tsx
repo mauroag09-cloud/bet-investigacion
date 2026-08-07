@@ -12,6 +12,7 @@ type Reclamo = {
   enlace?: string | null
   pruebas?: { nombre: string; url: string; tipo: string }[] | null
   origen?: string
+  visible?: boolean
 }
 
 const ESTADOS: Record<string, string> = {
@@ -39,7 +40,7 @@ export default function AdminReclamos() {
   const fetchReclamos = async () => {
     setLoading(true)
     try {
-      const res = await fetch('/api/reclamos?_t=' + Date.now())
+      const res = await fetch('/api/reclamos?todas=1&_t=' + Date.now())
       const data = await res.json()
       setReclamos(data)
     } catch {
@@ -141,6 +142,20 @@ export default function AdminReclamos() {
       })
     } catch {
       alert('Error al cambiar estado')
+    }
+  }
+
+  const handleVisibleChange = async (r: Reclamo, visible: boolean) => {
+    setReclamos((prev) => prev.map((x) => (x.id === r.id ? { ...x, visible } : x)))
+    try {
+      const res = await fetch(`/api/reclamos/${r.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ visible }),
+      })
+      if (!res.ok) alert('Error al cambiar visibilidad')
+    } catch {
+      alert('Error de conexión')
     }
   }
 
@@ -303,7 +318,24 @@ export default function AdminReclamos() {
                   )}
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex flex-col items-end gap-2">
+                  {r.visible === false && (
+                    <span className="text-[10px] font-ibm-mono px-1.5 py-0.5 rounded bg-gray-800 text-gray-400">
+                      Oculto
+                    </span>
+                  )}
+                  <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => handleVisibleChange(r, !r.visible)}
+                    className={`px-3 py-1.5 text-sm rounded transition-colors ${
+                      r.visible === false
+                        ? 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                        : 'bg-green-900/60 text-green-200 hover:bg-green-800'
+                    }`}
+                    title={r.visible === false ? 'Activarlo para que se vea en la web' : 'Ocultarlo de la web (sin borrar)'}
+                  >
+                    {r.visible === false ? 'Activar' : 'Visible'}
+                  </button>
                   <select
                     value={r.estado}
                     onChange={(e) => handleEstadoChange(r, e.target.value)}
@@ -327,6 +359,7 @@ export default function AdminReclamos() {
                   >
                     Eliminar
                   </button>
+                  </div>
                 </div>
               </div>
             ))}

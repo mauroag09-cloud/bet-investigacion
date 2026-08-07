@@ -242,7 +242,7 @@ export const ClaimsSection = () => {
                         rel="noopener noreferrer"
                         className="font-inter font-medium text-[#14213D] hover:text-[#B08D57] transition-colors"
                       >
-                        Ver expediente →
+                        Confirmar fuente →
                       </a>
                     ) : (
                       <span className="font-inter text-[#14213D]/30 cursor-default">

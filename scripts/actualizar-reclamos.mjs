@@ -1,21 +1,21 @@
 // ============================================================
-// actualizar-reclamos.mjs  (costo cero)
-// Busca reclamos/estafas de casas de apuestas destacados usando
-// feeds RSS GRATUITOS (Google Noticias + Yogonet), filtra por
-// relevancia (prioriza reclamos reales de jugadores) y los guarda
-// en la tabla reclamos de Supabase con origen='rss', estado='pending'.
+// actualizar-reclamos.mjs  (costo cero — solo Argentina)
+// Busca reclamos/denuncias de casas de apuestas en ARGENTINA
+// usando feeds RSS GRATUITOS de Google Noticias (gl=AR), con foco
+// en: reclamos, denuncias, falta de pago y promociones fraudulentas.
+// Guarda en la tabla reclamos de Supabase (origen='rss', pending).
 //
 // Uso:
 //   node scripts/actualizar-reclamos.mjs
-//   DEMO=1 node scripts/actualizar-reclamos.mjs   (datos de ejemplo)
+//   DEMO=1 node scripts/actualizar-reclamos.mjs
 // ============================================================
 
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://zwrdnhrtqkyvmuslelfm.supabase.co';
 const SUPABASE_KEY = process.env.SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp3cmRuaHJ0cWt5dm11c2xlbGZtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU5Nzc1MjgsImV4cCI6MjEwMTU1MzUyOH0.IL8tLTs4bwFRHynP5g2BSIkPcSg6tADUVLrBst8W7Vo';
-const PERPLEXITY_API_KEY = process.env.PERPLEXITY_API_KEY;
 const DEMO = process.env.DEMO === '1';
 const MAX_RESULTADOS = 6;
-const MAX_DIAS_ANTIGUEDAD = 3; // solo noticias de las últimas 72 hs
+// Máximo 3 meses de antigüedad (90 días)
+const MAX_DIAS_ANTIGUEDAD = 90;
 
 const headers = {
   apikey: SUPABASE_KEY,
@@ -23,34 +23,58 @@ const headers = {
   'Content-Type': 'application/json',
 };
 
-// ---------- Fuentes RSS gratuitas ----------
+// ---------- Feeds: Google Noticias SOLO Argentina ----------
+const AR = 'hl=es-419&gl=AR&ceid=AR:es-419';
 const FEEDS = [
-  'https://news.google.com/rss/search?q=estafa%20casino%20online%20argentina&hl=es-419&gl=AR&ceid=AR:es-419',
-  'https://news.google.com/rss/search?q=denuncia%20casa%20de%20apuestas&hl=es-419&gl=AR&ceid=AR:es-419',
-  'https://news.google.com/rss/search?q=casino%20online%20retiro%20bloqueado&hl=es-419&gl=AR&ceid=AR:es-419',
-  'https://news.google.com/rss/search?q=apuestas%20online%20estafa%20latinoamerica&hl=es-419&gl=MX&ceid=MX:es-419',
-  'https://www.yogonet.com/latinoamerica/rss',
+  `https://news.google.com/rss/search?q=reclamo%20casa%20de%20apuestas%20argentina&${AR}`,
+  `https://news.google.com/rss/search?q=denuncia%20casino%20online%20argentina&${AR}`,
+  `https://news.google.com/rss/search?q=apuestas%20online%20falta%20de%20pago%20retiro&${AR}`,
+  `https://news.google.com/rss/search?q=casino%20online%20bono%20promocion%20fraudulenta&${AR}`,
+  `https://news.google.com/rss/search?q=estafa%20apuestas%20online%20argentina&${AR}`,
+  `https://news.google.com/rss/search?q=casas%20de%20apuestas%20ilegales%20argentina&${AR}`,
 ];
 
 // ---------- Palabras clave ----------
-// Indica un reclamo real de jugador (peso 2)
+// Foco del usuario: reclamos, denuncias, falta de pago, promos fraudulentas
 const KW_RECLAMO = [
-  'estafa', 'denuncia', 'fraude', 'reclamo', 'retiro', 'bloqueo', 'bloqueada',
-  'bloqueado', 'queja', 'victima', 'usuario', 'jugador', 'apostador', 'cuenta',
-  'cobrar', 'pago', 'demanda', 'investigaci', 'clausur', 'ilegal', 'pirata',
-  'clandestin', 'sin licencia', 'no paga', 'impago',
+  'reclamo', 'denuncia', 'denunci', 'estafa', 'fraude', 'falta de pago',
+  'no paga', 'impago', 'retiro', 'bloqueo', 'bloqueada', 'bloqueado',
+  'demora', 'reembolso', 'devolucion', 'devolución', 'bono no acreditado',
+  'no acredit', 'premio', 'promocion fraudulenta', 'promoción fraudulenta',
+  'publicidad enganosa', 'publicidad engañosa', 'victima', 'queja', 'cobrar',
+  'cuenta', 'clausur', 'ilegal', 'pirata', 'clandestin', 'sin licencia',
 ];
-// Indica que es del sector apuestas/casinos (peso 1)
 const KW_SECTOR = [
-  'casino', 'apuesta', 'tragamoneda', 'slots', 'igaming', 'iGaming', 'bet',
-  'ruleta', 'poker', 'poquer', 'juego online', 'juegos online', 'plataforma de juego',
+  'casino', 'apuesta', 'tragamoneda', 'slots', 'igaming', 'iGaming', 'ruleta',
+  'poker', 'poquer', 'juego online', 'juegos online', 'plataforma de juego',
+  'bet', 'bookmaker',
 ];
-// Cualquier coincidencia descarta la noticia (ruido)
+// Indica Argentina (peso +1). Sin esto, igual puede pasar si el feed es AR.
+const KW_ARGENTINA = [
+  'argentina', 'argentino', 'bonaerense', 'iplyc', 'lotería de la ciudad',
+  'loteria de la ciudad', 'buenos aires', 'córdoba', 'cordoba', 'rosario',
+  'mendoza', 'tucuman', 'tucumán', 'salta', 'neuquen', 'neuquén', 'misiones',
+  'entre rios', 'entre ríos', 'santa fe', 'la plata', 'lotería nacional',
+  'loteria nacional', 'loterias', 'loterías', 'lotería de la provincia',
+  'lotería bonaerense', 'loteria bonaerense', 'aress', 'argentina gobierno',
+];
+// Cualquier mención a otro país descarta (solo Argentina)
+const KW_PAIS_NEGATIVO = [
+  'chile', 'colombia', 'mexico', 'méxico', 'peru', 'perú', 'uruguay',
+  'bolivia', 'paraguay', 'venezuela', 'ecuador', 'guatemala', 'honduras',
+  'el salvador', 'nicaragua', 'costa rica', 'panama', 'panamá',
+  'republica dominicana', 'puerto rico', 'españa', 'espan', 'brasil',
+  'valdivia', 'betplay', 'superintendencia de casinos', 'fiscalia de chile',
+];
+// Ruido genérico
 const KW_NEGATIVA = [
-  'españa', 'espan', 'mejores casas', 'sin restricc', 'top 10', 'ranking',
-  'bonus', 'promoci', 'oferta', 'registro gratis', 'gratuito', 'app nueva',
-  'torneo', 'premio de', 'sorteo', 'mundial', 'eurocopa', 'copa américa',
-  'futbol', 'fútbol', 'cuota', 'pronostico', 'prediccion', 'winning', 'jackpot',
+  'mejores casas', 'mejores casinos', 'mejor casino', 'billetera virtual',
+  'sin restricc', 'top 10', 'top 5', 'ranking', 'bonus', 'promoci',
+  'oferta', 'registro gratis', 'gratuito', 'torneo', 'sorteo', 'mundial',
+  'eurocopa', 'copa américa', 'copa america', 'futbol', 'fútbol', 'cuota',
+  'pronostico', 'prediccion', 'winning', 'jackpot', 'entrevista', 'opinion',
+  'metodos de pago', 'métodos de pago', 'depositos rapidos', 'depósitos rápidos',
+  'bono de bienvenida del', 'apk', 'apps para apostar', 'paga con',
 ];
 
 // ---------- Utilidades ----------
@@ -61,47 +85,50 @@ function normalizar(s) {
     .toLowerCase();
 }
 
+// Parsing simple con indexOf (sin regex frágiles)
 function parsearRSS(xml) {
   const items = [];
-  const regex = /<item>([\s\S]*?)<\/item>/g;
-  let m;
-  while ((m = regex.exec(xml))) {
-    const it = m[1];
+  let pos = 0;
+  while (true) {
+    const ini = xml.indexOf('<item>', pos);
+    if (ini === -1) break;
+    const fin = xml.indexOf('</item>', ini);
+    if (fin === -1) break;
+    const bloque = xml.slice(ini + 6, fin);
     const get = (tag) => {
-      const t = it.match(new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`));
-      return t
-        ? t[1]
-            .replace(/<!\[CDATA\[|\]\]>/g, '')
-            .replace(/<[^>]+>/g, '')
-            .replace(/&amp;/g, '&')
-            .replace(/&quot;/g, '"')
-            .replace(/&#39;|&apos;/g, "'")
-            .trim()
-        : '';
+      const a = bloque.indexOf('<' + tag + '>');
+      const b = bloque.indexOf('</' + tag + '>');
+      if (a === -1 || b === -1 || b < a) return '';
+      return bloque
+        .slice(a + tag.length + 2, b)
+        .replace(/<!\[CDATA\[|\]\]>/g, '')
+        .replace(/<[^>]+>/g, '')
+        .replace(/&amp;/g, '&')
+        .replace(/&quot;/g, '"')
+        .replace(/&#39;|&apos;/g, "'")
+        .trim();
     };
-    items.push({
-      title: get('title'),
-      link: get('link'),
-      description: get('description'),
-      fecha: get('pubDate'),
-    });
+    items.push({ title: get('title'), link: get('link'), description: get('description'), fecha: get('pubDate') });
+    pos = fin + 8;
   }
   return items;
 }
 
-// Puntaje de relevancia: exige sector + reclamo, descarta negativas
 function calcularScore(item) {
   const texto = normalizar(`${item.title} ${item.description}`);
   if (KW_NEGATIVA.some((k) => texto.includes(k))) return 0;
+  if (KW_PAIS_NEGATIVO.some((k) => texto.includes(k))) return 0; // solo Argentina
   const sector = KW_SECTOR.filter((k) => texto.includes(k)).length;
   const reclamo = KW_RECLAMO.filter((k) => texto.includes(k)).length;
   if (sector === 0 || reclamo === 0) return 0;
-  return Math.min(2 * reclamo + sector, 10);
+  const esAR = KW_ARGENTINA.some((k) => texto.includes(k));
+  return Math.min(2 * reclamo + sector + (esAR ? 1 : 0), 10);
 }
 
 function esReciente(fechaRSS) {
   const d = new Date(fechaRSS);
-  if (isNaN(d.getTime())) return true; // si no se puede parsear, no descartar
+  // Sin fecha válida se descarta (antes se dejaba pasar y entraban artículos viejos)
+  if (isNaN(d.getTime())) return false;
   return (Date.now() - d.getTime()) / 86400000 <= MAX_DIAS_ANTIGUEDAD;
 }
 
@@ -118,23 +145,23 @@ async function obtenerDeRSS() {
       const res = await fetch(feed, { redirect: 'follow' });
       if (!res.ok) continue;
       const xml = await res.text();
-      const items = parsearRSS(xml)
-        .filter(esReciente)
+      const parseados = parsearRSS(xml)
+      const items = parseados
+        .filter((it) => esReciente(it.fecha))
         .map((it) => ({ ...it, score: calcularScore(it) }))
         .filter((it) => it.score > 0);
       resultados.push(...items);
-      console.log(`✓ ${feed.split('/')[2]} → ${items.length} relevante(s)`);
+      console.log(`✓ ${feed.match(/q=([^&]+)/)?.[1] || 'feed'} → ${items.length} relevante(s)`);
     } catch (e) {
       console.error(`✗ Error en feed ${feed}: ${e.message}`);
     }
   }
 
-  // Dedupe por URL y por título normalizado (mismo artículo con links distintos)
+  // Dedupe por URL y por título normalizado
   const unicos = new Map();
   for (const it of resultados) {
     const clave = it.link || normalizar(it.title).slice(0, 60);
     if (unicos.has(clave)) continue;
-    // ¿Ya vimos un título muy parecido?
     const yaVisto = [...unicos.values()].some(
       (u) => normalizar(u.title).slice(0, 50) === normalizar(it.title).slice(0, 50)
     );
@@ -155,31 +182,8 @@ async function obtenerDeRSS() {
     }));
 }
 
-async function obtenerDePerplexity() {
-  const res = await fetch('https://api.perplexity.ai/chat/completions', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${PERPLEXITY_API_KEY}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model: 'sonar',
-      messages: [
-        {
-          role: 'user',
-          content: `Buscá en la web noticias y reclamos sobre estafas o problemas con casas de apuestas y casinos online (últimas 48 horas) en Argentina y Latinoamérica. Seleccioná los ${MAX_RESULTADOS} más destacados. Respondé SOLO con un JSON array válido: [{"plataforma":"...","titulo":"... (máx 60 chars)","descripcion":"... 1-2 frases","url":"..."}]. Si no hay nada, respondé [].`,
-        },
-      ],
-    }),
-  });
-  if (!res.ok) throw new Error(`Perplexity ${res.status}`);
-  const data = await res.json();
-  const contenido = data.choices?.[0]?.message?.content || '[]';
-  const ini = contenido.indexOf('[');
-  const fin = contenido.lastIndexOf(']');
-  return JSON.parse(ini >= 0 && fin > ini ? contenido.slice(ini, fin + 1) : '[]');
-}
-
 // ---------- 2) Guardar en Supabase ----------
 async function guardarEnSupabase(items) {
-  // Traer una sola vez lo ya guardado (para dedupe por URL y título)
   const ya = await fetch(`${SUPABASE_URL}/rest/v1/reclamos?select=enlace,titulo&limit=200`, { headers });
   const existentes = await ya.json();
   const enlacesPrevios = new Set(Array.isArray(existentes) ? existentes.map((r) => r.enlace) : []);
@@ -188,20 +192,20 @@ async function guardarEnSupabase(items) {
   let insertados = 0;
   let duplicados = 0;
   for (const item of items) {
+    // Salvaguarda: doble chequeo de antigüedad antes de insertar
+    const dias = (Date.now() - new Date(item.fecha).getTime()) / 86400000;
+    if (isNaN(dias) || dias > MAX_DIAS_ANTIGUEDAD) continue;
     const tituloNorm = normalizar(item.titulo).slice(0, 50);
-    if (
-      enlacesPrevios.has(item.url) ||
-      titulosPrevios.some((t) => t === tituloNorm)
-    ) {
+    if (enlacesPrevios.has(item.url) || titulosPrevios.some((t) => t === tituloNorm)) {
       duplicados++;
       continue;
     }
     const body = {
-      nombre_plataforma: item.plataforma || 'Noticias de apuestas',
-      titulo: item.titulo || '',
-      descripcion: item.descripcion || '',
+      nombre_plataforma: item.plataforma,
+      titulo: item.titulo,
+      descripcion: item.descripcion,
       estado: 'pending',
-      fecha: item.fecha || new Date().toISOString().slice(0, 10),
+      fecha: item.fecha,
       enlace: item.url || null,
       pruebas: [],
       origen: 'rss',
@@ -226,15 +230,11 @@ try {
   let items;
   if (DEMO) {
     items = [
-      { plataforma: 'Casino Demo AR', titulo: 'Denuncian demoras de más de 30 días en retiros', descripcion: 'Varios usuarios reportan retiros "en proceso" desde hace un mes.', url: 'https://ejemplo.com/demo-1', fecha: new Date().toISOString().slice(0, 10), score: 8 },
-      { plataforma: 'Apuestas Test', titulo: 'Bono de bienvenida no acreditado', descripcion: 'El bono prometido no se acreditó tras el primer depósito.', url: 'https://ejemplo.com/demo-2', fecha: new Date().toISOString().slice(0, 10), score: 6 },
+      { plataforma: 'Casino Demo AR', titulo: 'Denuncian falta de pago en retiros', descripcion: 'Varios usuarios reportan retiros impagos.', url: 'https://ejemplo.com/demo-1', fecha: new Date().toISOString().slice(0, 10), score: 8 },
     ];
     console.log('→ Modo DEMO');
-  } else if (PERPLEXITY_API_KEY) {
-    console.log('→ Usando Perplexity Sonar...');
-    items = await obtenerDePerplexity();
   } else {
-    console.log('→ Modo RSS gratuito (costo $0)...');
+    console.log('→ Modo RSS gratuito — SOLO Argentina (costo $0)...');
     items = await obtenerDeRSS();
   }
 
