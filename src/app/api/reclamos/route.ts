@@ -40,6 +40,7 @@ export async function POST(req: Request) {
       enlace: body.enlace || null,
       nombre_usuario: body.nombre_usuario || null,
       email: body.email || null,
+      pruebas: Array.isArray(body.pruebas) ? body.pruebas : [],
     })
 
   if (error) {
