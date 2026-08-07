@@ -128,13 +128,15 @@ export default function AdminReclamos() {
   }
 
   const handleEstadoChange = async (r: Reclamo, estado: string) => {
+    setReclamos((prev) =>
+      prev.map((x) => (x.id === r.id ? { ...x, estado: estado as Reclamo['estado'] } : x))
+    )
     try {
       await fetch(`/api/reclamos/${r.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ estado }),
       })
-      fetchReclamos()
     } catch {
       alert('Error al cambiar estado')
     }

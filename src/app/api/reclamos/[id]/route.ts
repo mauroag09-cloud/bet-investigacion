@@ -22,6 +22,8 @@ export async function PUT(
     return NextResponse.json({ error: 'No hay datos para actualizar' }, { status: 400 })
   }
 
+  updateData.updated_at = new Date().toISOString()
+
   const { error } = await supabase
     .from('reclamos')
     .update(updateData)

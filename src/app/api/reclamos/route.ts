@@ -25,6 +25,10 @@ export async function GET() {
 export async function POST(req: Request) {
   const body = await req.json()
 
+  if (!body.nombre_plataforma || !body.titulo) {
+    return NextResponse.json({ error: 'Plataforma y título son obligatorios' }, { status: 400 })
+  }
+
   const { error } = await supabase
     .from('reclamos')
     .insert({
